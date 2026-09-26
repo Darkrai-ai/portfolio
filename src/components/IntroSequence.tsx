@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useAppStore } from '../store/useAppStore';
 import { createScrambleState, updateScramble } from '../utils/scramble';
+import { audioManager } from '../audio/AudioManager';
 
 interface Spark {
   x: number;
@@ -136,6 +137,8 @@ const IntroSequence: React.FC = () => {
 
     let lastNow = performance.now();
     let elapsed = 0;
+    let lastLetterStepElapsed = -100;
+    let prevLockedCount = 0;
 
     const tick = (now: number) => {
       // Clamp frame delta to at most 28ms so background texture/font loads NEVER skip animation frames!
@@ -148,17 +151,25 @@ const IntroSequence: React.FC = () => {
         setSkipVisible(true);
       }
 
-      // PHASE 1: Scramble "Utsaphire" directly in DOM (zero React re-renders)
+      // PHASE 1: Scramble "Utsaphire" directly in DOM (zero React re-renders) + layered camera-shutter SFX
       if (elapsed <= scrambleDuration) {
         const prog = Math.min(elapsed / scrambleDuration, 1);
-        if (wordSpanRef.current) {
-          wordSpanRef.current.textContent = updateScramble(scrambleState, prog);
+        if (elapsed - lastLetterStepElapsed >= 50 || prog >= 1) {
+          lastLetterStepElapsed = elapsed;
+          const nextText = updateScramble(scrambleState, prog);
+          if (wordSpanRef.current) {
+            wordSpanRef.current.textContent = nextText;
+          }
+          const lockedCount = scrambleState.locked.filter(Boolean).length;
+          const newlyLocked = lockedCount > prevLockedCount;
+          prevLockedCount = lockedCount;
+          audioManager.playIntroLetterTick(prog, newlyLocked);
         }
         rafRef.current = requestAnimationFrame(tick);
         return;
       }
 
-      // Ensure final clean text is locked in and measure '.' coordinates
+      // Ensure final clean text is locked in, measure '.' coordinates, and fire shooting star swoosh
       if (!starInitialized) {
         starInitialized = true;
         if (wordSpanRef.current) {
@@ -166,6 +177,7 @@ const IntroSequence: React.FC = () => {
         }
         setupCanvas();
         updateStarTrajectory();
+        audioManager.playIntroStarSwoosh();
       }
 
       // PHASE 2: Shooting Star streaks in and BECOMES the '.' itself
@@ -281,6 +293,7 @@ const IntroSequence: React.FC = () => {
           // The shooting star has arrived at (targetX, targetY) and BECOMES the '.' itself!
           dotLockedIn = true;
           spawnImpactSparks(targetX, targetY);
+          audioManager.playIntroLetterTick(1, true);
 
           if (dotRef.current) {
             gsap.fromTo(

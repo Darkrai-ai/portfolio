@@ -26,6 +26,7 @@ class AudioManager {
   private lastHoverTime = 0;
   private lastScrollTime = 0;
   private lastEnergyTime = 0;
+  private lastIntroTickTime = 0;
 
   // Decoded Web Audio buffers + HTMLAudioElement fallback pools for zero-latency SFX
   private sfxBuffers: Partial<Record<'hover' | 'click' | 'scroll' | 'energy', AudioBuffer>> = {};
@@ -46,13 +47,18 @@ class AudioManager {
     if (typeof window !== 'undefined') {
       this.setupBackgroundMusic();
       this.preloadSfxFiles();
+      this.init();
 
       const unlock = () => {
-        this.init();
-        this.ensureBackgroundPlaying();
+        if (!this.isInitialized || (this.ctx && this.ctx.state === 'suspended')) {
+          this.init();
+        }
+        if (!this.bgStarted) {
+          this.ensureBackgroundPlaying();
+        }
       };
       window.addEventListener('pointerdown', unlock, { once: false, passive: true });
-      window.addEventListener('pointermove', unlock, { once: true, passive: true });
+      window.addEventListener('pointermove', unlock, { once: false, passive: true });
       window.addEventListener('wheel', unlock, { once: false, passive: true });
       window.addEventListener('keydown', unlock, { once: false, passive: true });
       window.addEventListener('touchstart', unlock, { once: false, passive: true });
@@ -335,6 +341,146 @@ class AudioManager {
     if (baseEl) {
       const clone = baseEl.cloneNode() as HTMLAudioElement;
       clone.volume = Math.max(0, Math.min(1, gainLevel * this.volume));
+      clone.play().catch(() => {});
+    }
+  }
+
+  /**
+   * Layered camera-shutter sound effect for each letter scroll / lock-in during the IntroSequence.
+   * Stacks primary shutter ('scroll.wav') + staggered secondary curtain ('hover.wav') with rising pitch.
+   */
+  playIntroLetterTick(progress = 0.5, isLockIn = false) {
+    if (typeof window === 'undefined' || this.muted) return;
+    if (!this.isInitialized) {
+      this.init();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+
+    const nowMs = performance.now();
+    if (!isLockIn && nowMs - this.lastIntroTickTime < 46) return;
+    this.lastIntroTickTime = nowMs;
+
+    const jitter = (Math.random() - 0.5) * 0.08;
+    const rateA = 1.04 + progress * 0.24 + jitter;
+    const rateB = 1.18 + progress * 0.28 - jitter * 0.7;
+    const gainA = isLockIn ? 0.36 : 0.24;
+    const gainB = isLockIn ? 0.28 : 0.18;
+
+    const scrollBuf = this.sfxBuffers.scroll;
+    const hoverBuf = this.sfxBuffers.hover;
+    const clickBuf = this.sfxBuffers.click;
+
+    if (this.ctx && this.ctx.state === 'running' && this.masterGain && (scrollBuf || hoverBuf)) {
+      const t0 = this.ctx.currentTime;
+
+      if (scrollBuf) {
+        const srcA = this.ctx.createBufferSource();
+        srcA.buffer = scrollBuf;
+        srcA.playbackRate.value = rateA;
+        const gA = this.ctx.createGain();
+        gA.gain.setValueAtTime(gainA, t0);
+        srcA.connect(gA);
+        gA.connect(this.masterGain);
+        srcA.start(t0);
+      }
+
+      if (hoverBuf) {
+        const srcB = this.ctx.createBufferSource();
+        srcB.buffer = hoverBuf;
+        srcB.playbackRate.value = rateB;
+        const gB = this.ctx.createGain();
+        gB.gain.setValueAtTime(gainB, t0 + 0.016);
+        srcB.connect(gB);
+        gB.connect(this.masterGain);
+        srcB.start(t0 + 0.016);
+      }
+
+      if (isLockIn && clickBuf) {
+        const srcC = this.ctx.createBufferSource();
+        srcC.buffer = clickBuf;
+        srcC.playbackRate.value = 1.08 + progress * 0.16;
+        const gC = this.ctx.createGain();
+        gC.gain.setValueAtTime(0.22, t0 + 0.026);
+        srcC.connect(gC);
+        gC.connect(this.masterGain);
+        srcC.start(t0 + 0.026);
+      }
+      return;
+    }
+
+    // HTMLAudioElement fallback with layered shutter playbackRate
+    const scrollEl = this.sfxHtmlElements.scroll;
+    if (scrollEl) {
+      const cloneA = scrollEl.cloneNode() as HTMLAudioElement;
+      cloneA.preservesPitch = false;
+      cloneA.playbackRate = rateA;
+      cloneA.volume = Math.max(0, Math.min(1, gainA * this.volume));
+      cloneA.play().catch(() => {});
+    }
+    const hoverEl = this.sfxHtmlElements.hover;
+    if (hoverEl) {
+      window.setTimeout(() => {
+        if (this.muted) return;
+        const cloneB = hoverEl.cloneNode() as HTMLAudioElement;
+        cloneB.preservesPitch = false;
+        cloneB.playbackRate = rateB;
+        cloneB.volume = Math.max(0, Math.min(1, gainB * this.volume));
+        cloneB.play().catch(() => {});
+      }, 16);
+    }
+  }
+
+  /**
+   * One celestial swoosh sound effect when the shooting star streaks across the screen in the IntroSequence.
+   */
+  playIntroStarSwoosh() {
+    if (typeof window === 'undefined' || this.muted) return;
+    if (!this.isInitialized) {
+      this.init();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+
+    const energyBuf = this.sfxBuffers.energy;
+    const scrollBuf = this.sfxBuffers.scroll;
+
+    if (this.ctx && this.ctx.state === 'running' && this.masterGain && energyBuf) {
+      const t0 = this.ctx.currentTime;
+
+      const src = this.ctx.createBufferSource();
+      src.buffer = energyBuf;
+      src.playbackRate.setValueAtTime(1.18, t0);
+      src.playbackRate.exponentialRampToValueAtTime(0.96, t0 + 0.72);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.58, t0);
+
+      src.connect(gain);
+      gain.connect(this.masterGain);
+      src.start(t0);
+
+      if (scrollBuf) {
+        const accent = this.ctx.createBufferSource();
+        accent.buffer = scrollBuf;
+        accent.playbackRate.value = 0.84;
+        const accentGain = this.ctx.createGain();
+        accentGain.gain.setValueAtTime(0.24, t0);
+        accent.connect(accentGain);
+        accentGain.connect(this.masterGain);
+        accent.start(t0);
+      }
+      return;
+    }
+
+    const energyEl = this.sfxHtmlElements.energy;
+    if (energyEl) {
+      const clone = energyEl.cloneNode() as HTMLAudioElement;
+      clone.preservesPitch = false;
+      clone.playbackRate = 1.15;
+      clone.volume = Math.max(0, Math.min(1, 0.58 * this.volume));
       clone.play().catch(() => {});
     }
   }
