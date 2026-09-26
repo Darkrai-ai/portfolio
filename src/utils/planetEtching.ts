@@ -62,44 +62,44 @@ export function etchSkillsIntoPlanetCanvases(
     const y = cy - size / 2;
 
     // =========================================================================
-    // 1. 3D BUMP MAP ENGRAVING (Deep Chiseled Bevel & Surface Relief)
+    // 1. 3D BUMP MAP ENGRAVING (Chiseled Bevel & Surface Relief)
     // =========================================================================
     // Top-left chiseled groove line
     bumpCtx.save();
     bumpCtx.filter = 'invert(100%)';
     bumpCtx.globalCompositeOperation = 'multiply';
-    bumpCtx.globalAlpha = 0.88;
-    bumpCtx.drawImage(img, x - 3.5, y - 3.5, size, size);
+    bumpCtx.globalAlpha = 0.78;
+    bumpCtx.drawImage(img, x - 3, y - 3, size, size);
     bumpCtx.restore();
 
     // Bottom-right sunlit bevel rim
     bumpCtx.save();
     bumpCtx.globalCompositeOperation = 'screen';
-    bumpCtx.globalAlpha = 0.95;
-    bumpCtx.shadowColor = 'rgba(255, 255, 255, 0.92)';
-    bumpCtx.shadowBlur = 7;
-    bumpCtx.drawImage(img, x + 3, y + 3, size, size);
+    bumpCtx.globalAlpha = 0.86;
+    bumpCtx.shadowColor = 'rgba(255, 255, 255, 0.85)';
+    bumpCtx.shadowBlur = 6;
+    bumpCtx.drawImage(img, x + 2.5, y + 2.5, size, size);
     bumpCtx.restore();
 
     // Interior relief (preserves underlying planet bump grain inside the logo)
     bumpCtx.save();
     bumpCtx.globalCompositeOperation = 'screen';
-    bumpCtx.globalAlpha = 0.45;
+    bumpCtx.globalAlpha = 0.36;
     bumpCtx.drawImage(img, x, y, size, size);
     bumpCtx.restore();
 
     // =========================================================================
-    // 2. COLOR TEXTURE ENGRAVING (High-Contrast Chiseled Basin + Sunlit Rim)
+    // 2. COLOR TEXTURE ENGRAVING (Subtle Chiseled Basin + Sunlit Rim)
     // =========================================================================
-    // Pass 0: On clouded/bright gas planets, carve a subtle darkened storm-eye basin
-    // behind the logo so bright surfaces (Uranus, Saturn, Earth) have deep natural contrast
+    // Pass 0: On clouded/bright gas planets, carve a gentle darkened storm-eye basin
+    // behind the logo so bright surfaces (Uranus, Saturn, Earth) have natural contrast
     if (isCloudedOrBright) {
       colorCtx.save();
       colorCtx.globalCompositeOperation = 'multiply';
-      const basinRadius = size * 0.66;
+      const basinRadius = size * 0.64;
       const basinGrad = colorCtx.createRadialGradient(cx, cy, size * 0.08, cx, cy, basinRadius);
-      basinGrad.addColorStop(0.0, 'rgba(12, 18, 32, 0.34)');
-      basinGrad.addColorStop(0.55, 'rgba(12, 18, 32, 0.22)');
+      basinGrad.addColorStop(0.0, 'rgba(12, 18, 32, 0.24)');
+      basinGrad.addColorStop(0.55, 'rgba(12, 18, 32, 0.15)');
       basinGrad.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
       colorCtx.fillStyle = basinGrad;
       colorCtx.beginPath();
@@ -108,37 +108,36 @@ export function etchSkillsIntoPlanetCanvases(
       colorCtx.restore();
     }
 
-    // Pass A: Deep top-left chiseled bevel shadow trench
+    // Pass A: Top-left chiseled bevel shadow trench
     colorCtx.save();
     colorCtx.filter = 'invert(100%)';
     colorCtx.globalCompositeOperation = 'multiply';
-    colorCtx.globalAlpha = isCloudedOrBright ? 0.46 : 0.28;
-    colorCtx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    colorCtx.shadowBlur = isCloudedOrBright ? 7 : 4;
-    colorCtx.drawImage(img, x - 2.5, y - 2.5, size, size);
+    colorCtx.globalAlpha = isCloudedOrBright ? 0.34 : 0.22;
+    colorCtx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+    colorCtx.shadowBlur = isCloudedOrBright ? 6 : 4;
+    colorCtx.drawImage(img, x - 2, y - 2, size, size);
     colorCtx.restore();
 
-    // Pass B: Luminous bottom-right sunlit bevel edge catching light
+    // Pass B: Soft bottom-right sunlit bevel edge catching light
     colorCtx.save();
     colorCtx.globalCompositeOperation = 'screen';
-    colorCtx.globalAlpha = isCloudedOrBright ? 0.38 : 0.22;
+    colorCtx.globalAlpha = isCloudedOrBright ? 0.26 : 0.17;
     colorCtx.shadowColor = haloColor;
-    colorCtx.shadowBlur = isCloudedOrBright ? 7 : 4;
-    colorCtx.drawImage(img, x + 2.5, y + 2.5, size, size);
+    colorCtx.shadowBlur = isCloudedOrBright ? 5 : 4;
+    colorCtx.drawImage(img, x + 2, y + 2, size, size);
     colorCtx.restore();
 
-    // Pass C: Rich overlay pass — shifts the planet's own rock/cloud texture
+    // Pass C: Soft overlay pass — shifts the planet's own rock/cloud texture
     colorCtx.save();
     colorCtx.globalCompositeOperation = 'overlay';
-    colorCtx.globalAlpha = isCloudedOrBright ? 0.44 : 0.30;
+    colorCtx.globalAlpha = isCloudedOrBright ? 0.32 : 0.24;
     colorCtx.drawImage(img, x, y, size, size);
     colorCtx.restore();
 
-    // Pass D: Crisp screen pass — keeps the engraving unmistakably legible
-    // while still letting the underlying planet surface texture show through
+    // Pass D: Gentle screen pass — keeps the engraving legible yet naturally blended
     colorCtx.save();
     colorCtx.globalCompositeOperation = 'screen';
-    colorCtx.globalAlpha = isCloudedOrBright ? 0.32 : 0.16;
+    colorCtx.globalAlpha = isCloudedOrBright ? 0.20 : 0.11;
     colorCtx.drawImage(img, x, y, size, size);
     colorCtx.restore();
   }
@@ -147,7 +146,7 @@ export function etchSkillsIntoPlanetCanvases(
 /**
  * Carves soft, feathered "eye-of-the-storm" clearings into a 3D cloud canvas directly over
  * each skill logo position so billowing clouds frame the logos instead of obscuring them,
- * and sculpts a crisp cloud-vapor relief of the logo inside the clearing.
+ * and sculpts a subtle cloud-vapor relief of the logo inside the clearing.
  * Note: Three.js alphaMap reads the GREEN channel (.g) of the texture (black = transparent, white = opaque).
  */
 export function carveCloudStormEyes(
@@ -156,7 +155,7 @@ export function carveCloudStormEyes(
   width: number,
   height: number,
   clearingScale = 1.0,
-  vaporEmbossAlpha = 0.48
+  vaporEmbossAlpha = 0.30
 ) {
   if (!logoImages || logoImages.length === 0) return;
 
@@ -176,13 +175,13 @@ export function carveCloudStormEyes(
     const rOuter = size * 0.76 * clearingScale;
 
     // 1. Paint a soft black radial gradient over the cloud map so Three.js alphaMap (.g channel)
-    // opens a crystal-clear feathered storm-eye window directly over each skill logo
+    // opens a feathered storm-eye window directly over each skill logo while leaving a subtle atmospheric veil
     cloudCtx.save();
     cloudCtx.globalCompositeOperation = 'source-over';
     const clearGrad = cloudCtx.createRadialGradient(cx, cy, rInner * 0.25, cx, cy, rOuter);
-    clearGrad.addColorStop(0.0, 'rgba(0, 0, 0, 0.95)');
-    clearGrad.addColorStop(0.55, 'rgba(0, 0, 0, 0.90)');
-    clearGrad.addColorStop(0.78, 'rgba(0, 0, 0, 0.45)');
+    clearGrad.addColorStop(0.0, 'rgba(0, 0, 0, 0.86)');
+    clearGrad.addColorStop(0.55, 'rgba(0, 0, 0, 0.78)');
+    clearGrad.addColorStop(0.78, 'rgba(0, 0, 0, 0.38)');
     clearGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0.0)');
     cloudCtx.fillStyle = clearGrad;
     cloudCtx.beginPath();
@@ -190,13 +189,13 @@ export function carveCloudStormEyes(
     cloudCtx.fill();
     cloudCtx.restore();
 
-    // 2. Sculpt a 3D cloud-vapor trace of the logo inside the storm-eye clearing
+    // 2. Sculpt a subtle 3D cloud-vapor trace of the logo inside the storm-eye clearing
     if (img && vaporEmbossAlpha > 0) {
       cloudCtx.save();
       cloudCtx.globalCompositeOperation = 'source-over';
       cloudCtx.globalAlpha = vaporEmbossAlpha;
-      cloudCtx.shadowColor = 'rgba(255, 255, 255, 0.9)';
-      cloudCtx.shadowBlur = 5;
+      cloudCtx.shadowColor = 'rgba(255, 255, 255, 0.75)';
+      cloudCtx.shadowBlur = 4;
       cloudCtx.drawImage(img, x, y, size, size);
       cloudCtx.restore();
     }

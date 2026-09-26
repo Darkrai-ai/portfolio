@@ -176,7 +176,7 @@ function getEnhancedPlanetMaps(
   logoImages: (HTMLImageElement | ImageBitmap | undefined)[],
   maxAniso: number
 ): { colorMap: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const skillId = `${skill.id}_${skill.techs.join('-')}_v8`;
+  const skillId = `${skill.id}_${skill.techs.join('-')}_v9`;
   if (enhancedMapCache[skillId]) {
     return enhancedMapCache[skillId];
   }
@@ -296,7 +296,7 @@ function EarthCloudLayers({
         ctx.filter = 'contrast(145%) brightness(1.05)';
         ctx.drawImage(img, 0, 0, 2048, 1024);
         ctx.filter = 'none';
-        carveCloudStormEyes(ctx, logoImages, 2048, 1024, 0.96, 0.42);
+        carveCloudStormEyes(ctx, logoImages, 2048, 1024, 0.96, 0.26);
       }
       const tex = new THREE.CanvasTexture(canvas);
       tex.colorSpace = THREE.SRGBColorSpace;
@@ -596,7 +596,7 @@ function GasGiantCloudLayers({
       ctx.filter = 'none';
     };
 
-    const cacheKey = `${planetId}_${logoImages.length}`;
+    const cacheKey = `${planetId}_${logoImages.length}_v9`;
 
     if (!cachedGasLowCloudTex[cacheKey]) {
       const lCanvas = document.createElement('canvas');
@@ -605,7 +605,7 @@ function GasGiantCloudLayers({
       const lCtx = lCanvas.getContext('2d');
       if (lCtx) {
         paintBaseDenseClouds(lCtx, 0);
-        carveCloudStormEyes(lCtx, logoImages, w, h, 0.96, 0.54);
+        carveCloudStormEyes(lCtx, logoImages, w, h, 0.96, 0.34);
       }
       const lTex = new THREE.CanvasTexture(lCanvas);
       lTex.colorSpace = THREE.SRGBColorSpace;
@@ -623,7 +623,7 @@ function GasGiantCloudLayers({
       const mCtx = mCanvas.getContext('2d');
       if (mCtx) {
         paintBaseDenseClouds(mCtx, iw * 0.22);
-        carveCloudStormEyes(mCtx, logoImages, w, h, 1.08, 0.36);
+        carveCloudStormEyes(mCtx, logoImages, w, h, 1.08, 0.20);
       }
       const mTex = new THREE.CanvasTexture(mCanvas);
       mTex.colorSpace = THREE.SRGBColorSpace;
