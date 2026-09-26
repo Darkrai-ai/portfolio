@@ -20,17 +20,39 @@ export const TECH_LOGO_PATHS: Record<string, string> = {
   SQLite: '/logos/sqlite.svg',
 };
 
+// Cache tiny 256x256 inverted (dark silhouette) versions of each logo image
+// so we never trigger slow full-canvas CPU ctx.filter='invert(100%)' or ctx.shadowBlur passes.
+const darkLogoCache = new WeakMap<HTMLImageElement | ImageBitmap, HTMLCanvasElement>();
+
+function getDarkLogoCanvas(img: HTMLImageElement | ImageBitmap): HTMLCanvasElement | HTMLImageElement | ImageBitmap {
+  if (typeof document === 'undefined') return img;
+  const cached = darkLogoCache.get(img);
+  if (cached) return cached;
+
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 256;
+  const ctx = c.getContext('2d');
+  if (ctx) {
+    ctx.drawImage(img, 0, 0, 256, 256);
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.fillStyle = '#080c18';
+    ctx.fillRect(0, 0, 256, 256);
+  }
+  darkLogoCache.set(img, c);
+  return c;
+}
+
 /**
  * Lightly engraves the official skill logo images into opposite hemispheres (x = 0.25*W and x = 0.75*W)
- * on both the 2K color texture and the 3D bump map canvas.
- * Uses 'overlay' and 'screen' blending so the logos appear LIGHTER than the planet surface
- * and naturally engraved into the rock/clouds (never dark or inburnt).
+ * on both the color texture and the 3D bump map canvas.
+ * Uses pure GPU-accelerated composite operations (zero ctx.shadowBlur or full-canvas ctx.filter).
  */
 export function etchSkillsIntoPlanetCanvases(
   colorCtx: CanvasRenderingContext2D,
   bumpCtx: CanvasRenderingContext2D,
   logoImages: (HTMLImageElement | ImageBitmap | undefined)[],
-  haloColor: string,
+  _haloColor: string,
   width: number,
   height: number,
   planetId?: string
@@ -53,10 +75,13 @@ export function etchSkillsIntoPlanetCanvases(
     planetId === 'venus' ||
     planetId === 'jupiter';
 
+  const bevelOffset = Math.max(1.2, width / 900);
+
   for (let i = 0; i < count; i++) {
     const img = effectiveLogos[i];
     if (!img) continue;
 
+    const darkImg = getDarkLogoCanvas(img);
     const cx = width * ((i + 0.5) / count);
     const x = cx - size / 2;
     const y = cy - size / 2;
@@ -66,19 +91,16 @@ export function etchSkillsIntoPlanetCanvases(
     // =========================================================================
     // Top-left chiseled groove line
     bumpCtx.save();
-    bumpCtx.filter = 'invert(100%)';
     bumpCtx.globalCompositeOperation = 'multiply';
     bumpCtx.globalAlpha = 0.78;
-    bumpCtx.drawImage(img, x - 3, y - 3, size, size);
+    bumpCtx.drawImage(darkImg, x - bevelOffset, y - bevelOffset, size, size);
     bumpCtx.restore();
 
     // Bottom-right sunlit bevel rim
     bumpCtx.save();
     bumpCtx.globalCompositeOperation = 'screen';
     bumpCtx.globalAlpha = 0.86;
-    bumpCtx.shadowColor = 'rgba(255, 255, 255, 0.85)';
-    bumpCtx.shadowBlur = 6;
-    bumpCtx.drawImage(img, x + 2.5, y + 2.5, size, size);
+    bumpCtx.drawImage(img, x + bevelOffset, y + bevelOffset, size, size);
     bumpCtx.restore();
 
     // Interior relief (preserves underlying planet bump grain inside the logo)
@@ -110,21 +132,16 @@ export function etchSkillsIntoPlanetCanvases(
 
     // Pass A: Top-left chiseled bevel shadow trench
     colorCtx.save();
-    colorCtx.filter = 'invert(100%)';
     colorCtx.globalCompositeOperation = 'multiply';
-    colorCtx.globalAlpha = isCloudedOrBright ? 0.34 : 0.22;
-    colorCtx.shadowColor = 'rgba(0, 0, 0, 0.75)';
-    colorCtx.shadowBlur = isCloudedOrBright ? 6 : 4;
-    colorCtx.drawImage(img, x - 2, y - 2, size, size);
+    colorCtx.globalAlpha = isCloudedOrBright ? 0.36 : 0.24;
+    colorCtx.drawImage(darkImg, x - bevelOffset, y - bevelOffset, size, size);
     colorCtx.restore();
 
     // Pass B: Soft bottom-right sunlit bevel edge catching light
     colorCtx.save();
     colorCtx.globalCompositeOperation = 'screen';
     colorCtx.globalAlpha = isCloudedOrBright ? 0.26 : 0.17;
-    colorCtx.shadowColor = haloColor;
-    colorCtx.shadowBlur = isCloudedOrBright ? 5 : 4;
-    colorCtx.drawImage(img, x + 2, y + 2, size, size);
+    colorCtx.drawImage(img, x + bevelOffset, y + bevelOffset, size, size);
     colorCtx.restore();
 
     // Pass C: Soft overlay pass — shifts the planet's own rock/cloud texture
@@ -194,8 +211,6 @@ export function carveCloudStormEyes(
       cloudCtx.save();
       cloudCtx.globalCompositeOperation = 'source-over';
       cloudCtx.globalAlpha = vaporEmbossAlpha;
-      cloudCtx.shadowColor = 'rgba(255, 255, 255, 0.75)';
-      cloudCtx.shadowBlur = 4;
       cloudCtx.drawImage(img, x, y, size, size);
       cloudCtx.restore();
     }

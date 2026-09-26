@@ -182,8 +182,8 @@ function getEnhancedPlanetMaps(
   }
 
   const cfg = PLANET_CONFIG[skill.id] || PLANET_CONFIG.mercury;
-  const w = 2048;
-  const h = 1024;
+  const w = 1024;
+  const h = 512;
 
   const colorCanvas = document.createElement('canvas');
   colorCanvas.width = w;
@@ -289,14 +289,14 @@ function EarthCloudLayers({
 
     if (!cachedEarthLowCloudTex) {
       const canvas = document.createElement('canvas');
-      canvas.width = 2048;
-      canvas.height = 1024;
+      canvas.width = 1024;
+      canvas.height = 512;
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.filter = 'contrast(145%) brightness(1.05)';
-        ctx.drawImage(img, 0, 0, 2048, 1024);
+        ctx.drawImage(img, 0, 0, 1024, 512);
         ctx.filter = 'none';
-        carveCloudStormEyes(ctx, logoImages, 2048, 1024, 0.96, 0.26);
+        carveCloudStormEyes(ctx, logoImages, 1024, 512, 0.96, 0.26);
       }
       const tex = new THREE.CanvasTexture(canvas);
       tex.colorSpace = THREE.SRGBColorSpace;
@@ -309,14 +309,14 @@ function EarthCloudLayers({
 
     if (!cachedEarthHighCloudTex) {
       const hCanvas = document.createElement('canvas');
-      hCanvas.width = 2048;
-      hCanvas.height = 1024;
+      hCanvas.width = 1024;
+      hCanvas.height = 512;
       const hCtx = hCanvas.getContext('2d');
       if (hCtx) {
         hCtx.filter = 'contrast(145%) brightness(1.05)';
-        hCtx.drawImage(img, 0, 0, 2048, 1024);
+        hCtx.drawImage(img, 0, 0, 1024, 512);
         hCtx.filter = 'none';
-        carveEquatorialCloudBand(hCtx, 2048, 1024);
+        carveEquatorialCloudBand(hCtx, 1024, 512);
       }
       const hTex = new THREE.CanvasTexture(hCanvas);
       hTex.colorSpace = THREE.SRGBColorSpace;
@@ -569,13 +569,13 @@ function GasGiantCloudLayers({
       return { lowCloudTex: rawCloudTex, midCloudTex: rawCloudTex, highCloudTex: rawCloudTex };
     }
 
-    const w = 2048;
-    const h = 1024;
+    const w = 1024;
+    const h = 512;
     const iw = img.width || 2048;
     const ih = img.height || 1024;
 
     const paintBaseDenseClouds = (ctx: CanvasRenderingContext2D, shiftX = 0) => {
-      ctx.filter = 'brightness(1.85) contrast(130%) blur(1.5px)';
+      ctx.filter = 'brightness(1.85) contrast(130%)';
       ctx.drawImage(img, shiftX, ih * 0.12, iw * 0.48, ih * 0.65, 0, 0, w / 2, h);
       ctx.save();
       ctx.translate(w, 0);
@@ -772,8 +772,8 @@ function SaturnRings({ dimmed, highlighted }: { dimmed: boolean; highlighted: bo
     const img = rawRingTex.image as HTMLImageElement;
     if (!img || typeof document === 'undefined') return rawRingTex;
 
-    const w = img.width || 2048;
-    const h = img.height || 128;
+    const w = 1024;
+    const h = 32;
     const canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;

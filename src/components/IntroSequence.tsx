@@ -31,7 +31,8 @@ const IntroSequence: React.FC = () => {
   const dockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedDockRef = useRef(false);
 
-  // Play the full intro every time the page is opened, using a single 60fps rAF loop (zero React state re-renders)
+  // Play the full intro every time the page is opened, using clamped frame-delta timing
+  // so network/asset loads on production never skip the shooting star or cause frame jumps
   useEffect(() => {
     if (isDone) return;
 
@@ -44,18 +45,18 @@ const IntroSequence: React.FC = () => {
       wordSpanRef.current.textContent = updateScramble(scrambleState, 0);
     }
 
-    const scrambleDuration = 1650; // ms for "Utsaphire" text scramble
-    const starFlightDuration = 580; // ms for shooting star to streak across and land as the '.'
-    const tailAbsorbDuration = 420; // ms for tail absorption + impact sparks after becoming the '.'
+    const scrambleDuration = 1550; // ms for "Utsaphire" text scramble
+    const starFlightDuration = 760; // ms for shooting star to streak across and land as the '.'
+    const tailAbsorbDuration = 440; // ms for tail absorption + impact sparks after becoming the '.'
     const totalTimeline = scrambleDuration + starFlightDuration + tailAbsorbDuration;
 
     let skipShown = false;
     let starInitialized = false;
     let dotLockedIn = false;
 
-    // Shooting star geometry state (initialized right when scramble completes)
     let width = window.innerWidth;
     let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let ctx: CanvasRenderingContext2D | null = null;
     let startX = 0;
     let startY = 0;
@@ -63,10 +64,49 @@ const IntroSequence: React.FC = () => {
     let ctrlY = 0;
     let targetX = 0;
     let targetY = 0;
-    let dotRadius = 5;
+    let dotRadius = 5.5;
 
-    const trailPoints: Array<{ x: number; y: number }> = [];
     const sparks: Spark[] = [];
+
+    const setupCanvas = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+    };
+
+    const updateStarTrajectory = () => {
+      const dotEl = dotRef.current;
+      const wordEl = wordSpanRef.current;
+      if (!dotEl) return;
+
+      const rect = dotEl.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        targetX = rect.left + rect.width * 0.46;
+        targetY = rect.top + rect.height * 0.75;
+        dotRadius = Math.max(5, rect.width * 0.24);
+      } else if (wordEl) {
+        const wRect = wordEl.getBoundingClientRect();
+        targetX = wRect.right + 12;
+        targetY = wRect.top + wRect.height * 0.75;
+        dotRadius = 6;
+      }
+
+      // Start well inside the upper-left viewport so the entire shooting star arc is 100% visible on every screen
+      startX = Math.max(width * 0.12, targetX - Math.min(width * 0.5, 540));
+      startY = Math.max(height * 0.12, targetY - Math.min(height * 0.36, 280));
+      ctrlX = startX + (targetX - startX) * 0.58;
+      ctrlY = Math.max(height * 0.06, Math.min(startY, targetY) - Math.min(height * 0.12, 95));
+    };
+
+    setupCanvas();
 
     const getQuadBezierPoint = (t: number) => {
       const inv = 1 - t;
@@ -76,61 +116,34 @@ const IntroSequence: React.FC = () => {
       };
     };
 
-    const initShootingStar = () => {
-      const canvas = canvasRef.current;
-      const dotEl = dotRef.current;
-      if (!canvas || !dotEl) return;
-
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-
-      ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.scale(dpr, dpr);
-      }
-
-      // Exact screen coordinates of the '.' glyph at the end of "Utsaphire."
-      const rect = dotEl.getBoundingClientRect();
-      targetX = rect.left + rect.width * 0.46;
-      targetY = rect.top + rect.height * 0.75;
-      dotRadius = Math.max(4.5, rect.width * 0.24);
-
-      // Sweeping diagonal arc from upper-left sky directly into the '.' position
-      const spanX = Math.max(width * 0.54, 560);
-      const spanY = Math.max(height * 0.38, 270);
-      startX = targetX - spanX;
-      startY = targetY - spanY;
-      ctrlX = targetX - spanX * 0.28;
-      ctrlY = targetY - spanY * 0.64;
-    };
-
     const spawnImpactSparks = (ix: number, iy: number) => {
       const palette = ['#FFFFFF', '#4FC3F7', '#FFC857', '#8B6BF2'];
-      for (let i = 0; i < 16; i++) {
-        const angle = (Math.PI * 2 * i) / 16 + (Math.random() - 0.5) * 0.25;
-        const speed = 1.1 + Math.random() * 3.4;
+      for (let i = 0; i < 18; i++) {
+        const angle = (Math.PI * 2 * i) / 18 + (Math.random() - 0.5) * 0.25;
+        const speed = 1.2 + Math.random() * 3.6;
         sparks.push({
           x: ix,
           y: iy,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 0.4,
           life: 0,
-          maxLife: 20 + Math.random() * 14,
-          size: 1.4 + Math.random() * 1.6,
+          maxLife: 22 + Math.random() * 14,
+          size: 1.5 + Math.random() * 1.7,
           color: palette[i % palette.length],
         });
       }
     };
 
-    const animStart = performance.now();
+    let lastNow = performance.now();
+    let elapsed = 0;
 
     const tick = (now: number) => {
-      const elapsed = now - animStart;
+      // Clamp frame delta to at most 28ms so background texture/font loads NEVER skip animation frames!
+      const dt = Math.min(Math.max(now - lastNow, 0), 28);
+      lastNow = now;
+      elapsed += dt;
 
-      if (!skipShown && elapsed >= 550) {
+      if (!skipShown && elapsed >= 500) {
         skipShown = true;
         setSkipVisible(true);
       }
@@ -145,13 +158,14 @@ const IntroSequence: React.FC = () => {
         return;
       }
 
-      // Ensure final clean text is locked in
+      // Ensure final clean text is locked in and measure '.' coordinates
       if (!starInitialized) {
         starInitialized = true;
         if (wordSpanRef.current) {
           wordSpanRef.current.textContent = 'Utsaphire';
         }
-        initShootingStar();
+        setupCanvas();
+        updateStarTrajectory();
       }
 
       // PHASE 2: Shooting Star streaks in and BECOMES the '.' itself
@@ -160,57 +174,76 @@ const IntroSequence: React.FC = () => {
 
         const starElapsed = elapsed - scrambleDuration;
         const rawFlightT = Math.min(starElapsed / starFlightDuration, 1);
-        // Smooth easeOutQuad so it streaks fast across the sky and lands directly into the '.' slot
-        const flightT = 1 - Math.pow(1 - rawFlightT, 1.65);
+        // Smooth ease-out curve so the shooting star is clearly visible across its whole arc
+        const flightT = 1 - Math.pow(1 - rawFlightT, 1.85);
 
-        const headPt = getQuadBezierPoint(flightT);
-        trailPoints.unshift(headPt);
-        const maxTrail = rawFlightT < 1 ? 16 : Math.max(0, Math.round(16 * (1 - (starElapsed - starFlightDuration) / 160)));
-        while (trailPoints.length > maxTrail) {
-          trailPoints.pop();
+        if (rawFlightT < 1) {
+          updateStarTrajectory();
         }
 
-        // Draw layered hardware-accelerated meteor tail (no slow ctx.shadowBlur!)
-        if (trailPoints.length > 1) {
-          const tailEnd = trailPoints[trailPoints.length - 1];
-          const tailAlpha = rawFlightT < 1 ? 1 : Math.max(0, 1 - (starElapsed - starFlightDuration) / 160);
+        const headPt = getQuadBezierPoint(flightT);
+        const tailFade =
+          rawFlightT < 1
+            ? 1
+            : Math.max(0, 1 - (starElapsed - starFlightDuration) / 190);
 
-          // Soft outer cyan-violet aura stroke
-          const outerGrad = ctx.createLinearGradient(headPt.x, headPt.y, tailEnd.x, tailEnd.y);
-          outerGrad.addColorStop(0, `rgba(79, 195, 247, ${0.42 * tailAlpha})`);
-          outerGrad.addColorStop(0.5, `rgba(139, 107, 242, ${0.18 * tailAlpha})`);
+        // Compute analytic curved meteor tail along the Bezier trajectory (always smooth regardless of FPS)
+        const tailSpanT = 0.34 * tailFade;
+        const tailStartT = Math.max(0, flightT - tailSpanT);
+
+        if (flightT > tailStartT + 0.004 && tailFade > 0.01) {
+          const tailEndPt = getQuadBezierPoint(tailStartT);
+          const steps = 22;
+
+          const traceTailPath = () => {
+            if (!ctx) return;
+            ctx.beginPath();
+            for (let s = 0; s <= steps; s++) {
+              const u = s / steps;
+              const sampleT = flightT - u * (flightT - tailStartT);
+              const pt = getQuadBezierPoint(sampleT);
+              if (s === 0) ctx.moveTo(pt.x, pt.y);
+              else ctx.lineTo(pt.x, pt.y);
+            }
+          };
+
+          // 1. Wide outer cyan-violet atmospheric glow
+          const outerGrad = ctx.createLinearGradient(headPt.x, headPt.y, tailEndPt.x, tailEndPt.y);
+          outerGrad.addColorStop(0, `rgba(79, 195, 247, ${0.52 * tailFade})`);
+          outerGrad.addColorStop(0.45, `rgba(139, 107, 242, ${0.26 * tailFade})`);
           outerGrad.addColorStop(1, 'rgba(79, 195, 247, 0)');
-
-          ctx.beginPath();
-          ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
-          for (let i = 1; i < trailPoints.length; i++) {
-            ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-          }
+          traceTailPath();
           ctx.strokeStyle = outerGrad;
-          ctx.lineWidth = 10;
+          ctx.lineWidth = 14;
           ctx.lineCap = 'round';
           ctx.stroke();
 
-          // Bright inner white-cyan core stroke
-          const coreGrad = ctx.createLinearGradient(headPt.x, headPt.y, tailEnd.x, tailEnd.y);
-          coreGrad.addColorStop(0, `rgba(255, 255, 255, ${0.96 * tailAlpha})`);
-          coreGrad.addColorStop(0.35, `rgba(79, 195, 247, ${0.82 * tailAlpha})`);
-          coreGrad.addColorStop(1, 'rgba(79, 195, 247, 0)');
+          // 2. Mid electric-cyan plasma streak
+          const midGrad = ctx.createLinearGradient(headPt.x, headPt.y, tailEndPt.x, tailEndPt.y);
+          midGrad.addColorStop(0, `rgba(140, 225, 255, ${0.85 * tailFade})`);
+          midGrad.addColorStop(0.5, `rgba(79, 195, 247, ${0.45 * tailFade})`);
+          midGrad.addColorStop(1, 'rgba(79, 195, 247, 0)');
+          traceTailPath();
+          ctx.strokeStyle = midGrad;
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.stroke();
 
-          ctx.beginPath();
-          ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
-          for (let i = 1; i < trailPoints.length; i++) {
-            ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
-          }
+          // 3. Brilliant white-hot inner core
+          const coreGrad = ctx.createLinearGradient(headPt.x, headPt.y, tailEndPt.x, tailEndPt.y);
+          coreGrad.addColorStop(0, `rgba(255, 255, 255, ${0.98 * tailFade})`);
+          coreGrad.addColorStop(0.4, `rgba(190, 240, 255, ${0.88 * tailFade})`);
+          coreGrad.addColorStop(1, 'rgba(79, 195, 247, 0)');
+          traceTailPath();
           ctx.strokeStyle = coreGrad;
           ctx.lineWidth = 2.8;
           ctx.lineCap = 'round';
           ctx.stroke();
         }
 
-        // Draw blazing shooting star head mientras in flight (condensing into the exact '.' size as it arrives)
+        // Draw blazing shooting star head + 4-pointed star flare while in flight
         if (rawFlightT < 1) {
-          const glowRadius = 20 * (1 - rawFlightT * 0.35);
+          const glowRadius = 26 * (1 - rawFlightT * 0.28);
           const headGlow = ctx.createRadialGradient(
             headPt.x,
             headPt.y,
@@ -220,17 +253,29 @@ const IntroSequence: React.FC = () => {
             glowRadius
           );
           headGlow.addColorStop(0, 'rgba(255, 255, 255, 1)');
-          headGlow.addColorStop(0.3, 'rgba(79, 195, 247, 0.88)');
+          headGlow.addColorStop(0.32, 'rgba(79, 195, 247, 0.92)');
+          headGlow.addColorStop(0.68, 'rgba(139, 107, 242, 0.35)');
           headGlow.addColorStop(1, 'rgba(79, 195, 247, 0)');
           ctx.fillStyle = headGlow;
           ctx.beginPath();
           ctx.arc(headPt.x, headPt.y, glowRadius, 0, Math.PI * 2);
           ctx.fill();
 
-          // Solid bright core that matches the '.' radius upon arrival
+          // Crisp 4-point celestial star flare crosshairs
+          const flareLen = 16 * (1 - rawFlightT * 0.35);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(headPt.x - flareLen, headPt.y);
+          ctx.lineTo(headPt.x + flareLen, headPt.y);
+          ctx.moveTo(headPt.x, headPt.y - flareLen);
+          ctx.lineTo(headPt.x, headPt.y + flareLen);
+          ctx.stroke();
+
+          // Solid bright core that condenses into the '.' radius upon arrival
           ctx.fillStyle = '#FFFFFF';
           ctx.beginPath();
-          ctx.arc(headPt.x, headPt.y, dotRadius * (0.85 + 0.3 * (1 - rawFlightT)), 0, Math.PI * 2);
+          ctx.arc(headPt.x, headPt.y, dotRadius * (0.9 + 0.35 * (1 - rawFlightT)), 0, Math.PI * 2);
           ctx.fill();
         } else if (!dotLockedIn) {
           // The shooting star has arrived at (targetX, targetY) and BECOMES the '.' itself!
@@ -263,21 +308,22 @@ const IntroSequence: React.FC = () => {
           const sinceLand = starElapsed - starFlightDuration;
           if (sinceLand >= 0 && sinceLand < 380) {
             const ringT = sinceLand / 380;
-            const ringRadius = dotRadius + ringT * 42;
-            const ringAlpha = (1 - ringT) * 0.65;
+            const ringRadius = dotRadius + ringT * 44;
+            const ringAlpha = (1 - ringT) * 0.7;
             ctx.strokeStyle = `rgba(79, 195, 247, ${ringAlpha})`;
-            ctx.lineWidth = 1.6 * (1 - ringT);
+            ctx.lineWidth = 1.8 * (1 - ringT);
             ctx.beginPath();
             ctx.arc(targetX, targetY, ringRadius, 0, Math.PI * 2);
             ctx.stroke();
           }
 
+          const stepFactor = dt / 16.66;
           for (let i = sparks.length - 1; i >= 0; i--) {
             const sp = sparks[i];
-            sp.x += sp.vx;
-            sp.y += sp.vy;
-            sp.vy += 0.06;
-            sp.life += 1;
+            sp.x += sp.vx * stepFactor;
+            sp.y += sp.vy * stepFactor;
+            sp.vy += 0.06 * stepFactor;
+            sp.life += stepFactor;
 
             if (sp.life >= sp.maxLife) {
               sparks.splice(i, 1);

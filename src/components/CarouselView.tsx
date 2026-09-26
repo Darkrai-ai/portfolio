@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useMemo, Suspense } from 'react';
+import React, { useRef, useEffect, useMemo, useState, Suspense } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -373,6 +373,17 @@ export default function CarouselView() {
   const lastFocusedIndex = useRef(0);
   const lastSpinningRef = useRef(false);
   const prevViewRef = useRef<ViewState>(view);
+  const [mountedCount, setMountedCount] = useState(1);
+
+  // Stagger mounting the 8 3D planets 1 by 1 across separate frames so WebGL texture uploads
+  // and shader compilation never bunch up on a single frame during the IntroSequence
+  useEffect(() => {
+    if (mountedCount >= sortedSkills.length) return;
+    const timer = setTimeout(() => {
+      setMountedCount((prev) => Math.min(sortedSkills.length, prev + 1));
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [mountedCount]);
 
   const activeProject = projects.find((p) => p.id === focusedProjectId);
   const activeSkillIds = sortedSkills
@@ -592,7 +603,7 @@ export default function CarouselView() {
       {/* Glowing 3D orbital tracks in About Me view */}
       <AboutOrbitRings visible={view === 'about'} />
 
-      {sortedSkills.map((skill, index) => {
+      {sortedSkills.slice(0, mountedCount).map((skill, index) => {
         const isFocused = skill.id === focusedPlanetId;
         const activeIndex = activeSkillIds.indexOf(skill.id);
         const isHighlighted = activeIndex !== -1;
