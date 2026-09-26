@@ -49,10 +49,12 @@ export default function ProjectList() {
     focusPlanet(sortedSkills[nextIdx].id);
   };
 
+  const isMultiDeck = filteredProjects.length >= 3;
+
   return (
     <section
       aria-label="Main menu projects and orbital navigation"
-      className="fixed bottom-5 md:bottom-6 left-1/2 -translate-x-1/2 z-30 w-full max-w-4xl px-6 flex flex-col items-center pointer-events-none select-none"
+      className="fixed bottom-5 md:bottom-6 left-1/2 -translate-x-1/2 z-30 w-full max-w-5xl px-4 sm:px-8 flex flex-col items-center pointer-events-none select-none"
     >
       {/* Micro Telemetry Label Above Flat Projects */}
       <div className="flex items-center gap-3 mb-2">
@@ -74,7 +76,9 @@ export default function ProjectList() {
             initial="hidden"
             animate="show"
             exit="exit"
-            className="flex flex-wrap md:flex-nowrap items-end justify-center gap-4 md:gap-6"
+            className={`w-full flex flex-wrap lg:flex-nowrap items-stretch justify-center ${
+              isMultiDeck ? 'gap-2.5 sm:gap-3.5 md:gap-4' : 'gap-4 md:gap-6'
+            }`}
           >
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project, idx) => (
@@ -87,12 +91,15 @@ export default function ProjectList() {
                     audioManager.play('click');
                     openProject(project.id);
                   }}
-                  className="pointer-events-auto cursor-pointer group relative text-left px-6 py-3 min-w-[220px] md:min-w-[265px]
-                             bg-gradient-to-t from-metal-100/[0.07] via-metal-100/[0.02] to-transparent
-                             hover:from-accent-blue/[0.15] hover:via-accent-blue/[0.04]
-                             backdrop-blur-[3px]
-                             [transform:rotateX(24deg)] hover:[transform:rotateX(0deg)_translateY(-4px)]
-                             origin-bottom transition-all duration-300 ease-out focus:outline-none"
+                  className={`pointer-events-auto cursor-pointer group relative text-left ${
+                    isMultiDeck
+                      ? 'px-4 md:px-5 py-2.5 md:py-3 min-w-[190px] sm:min-w-[210px] max-w-[310px] flex-1'
+                      : 'px-5 md:px-6 py-3 min-w-[220px] md:min-w-[260px] max-w-[360px]'
+                  } bg-gradient-to-t from-metal-100/[0.07] via-metal-100/[0.02] to-transparent
+                    hover:from-accent-blue/[0.15] hover:via-accent-blue/[0.04]
+                    backdrop-blur-[3px]
+                    [transform:rotateX(24deg)] hover:[transform:rotateX(0deg)_translateY(-4px)]
+                    origin-bottom transition-all duration-300 ease-out focus:outline-none`}
                 >
                   {/* Corner Architectural Ticks */}
                   <span className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-metal-100/35 group-hover:border-accent-blue transition-colors duration-300" />
@@ -101,20 +108,28 @@ export default function ProjectList() {
                   {/* Glowing Flat Horizon Base Line */}
                   <span className="absolute bottom-0 inset-x-2 h-[1.5px] bg-gradient-to-r from-transparent via-metal-100/35 to-transparent group-hover:via-accent-blue group-hover:shadow-[0_0_16px_#4FC3F7] transition-all duration-300" />
 
-                  <div className="flex items-center justify-between gap-5">
-                    <div className="flex flex-col">
+                  <div className="flex items-center justify-between gap-3 h-full">
+                    <div className="flex flex-col min-w-0">
                       <span className="font-hud text-[9px] tracking-[0.28em] uppercase text-accent-blue/75 group-hover:text-accent-blue transition-colors">
                         {`SYS // 0${idx + 1}`}
                       </span>
-                      <span className="mt-0.5 font-display text-sm md:text-base tracking-[0.1em] uppercase text-metal-100 group-hover:text-accent-blue group-hover:[text-shadow:0_0_14px_rgba(79,195,247,0.5)] transition-all duration-300 whitespace-nowrap">
+                      <span
+                        className={`mt-0.5 font-display ${
+                          isMultiDeck
+                            ? 'text-xs sm:text-[13px] md:text-sm tracking-[0.06em]'
+                            : 'text-sm md:text-base tracking-[0.09em]'
+                        } uppercase text-metal-100 group-hover:text-accent-blue group-hover:[text-shadow:0_0_14px_rgba(79,195,247,0.5)] transition-all duration-300 leading-snug`}
+                      >
                         {project.title}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-hud text-[9px] tracking-[0.22em] uppercase text-accent-blue opacity-0 -translate-x-1 group-hover:opacity-90 group-hover:translate-x-0 transition-all duration-300 hidden sm:inline">
-                        VIEW
-                      </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {!isMultiDeck && (
+                        <span className="font-hud text-[9px] tracking-[0.22em] uppercase text-accent-blue opacity-0 -translate-x-1 group-hover:opacity-90 group-hover:translate-x-0 transition-all duration-300 hidden sm:inline">
+                          VIEW
+                        </span>
+                      )}
                       <span className="text-metal-400/60 group-hover:text-accent-blue group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 text-sm">
                         ↗
                       </span>
