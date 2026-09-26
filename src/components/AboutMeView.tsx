@@ -19,6 +19,7 @@ export default function AboutMeView() {
   const { view, exitAboutMe } = useAppStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const [activeSection, setActiveSection] = useState<string>(SECTIONS[0].id);
   const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -114,6 +115,7 @@ export default function AboutMeView() {
   const {
     name,
     title,
+    headshotPath,
     bio,
     education,
     experience,
@@ -186,18 +188,29 @@ export default function AboutMeView() {
                 <span className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-accent-blue/60" />
 
                 <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                  {/* Orbital Astrolabe Emblem */}
-                  <div className="relative shrink-0 w-28 h-28 flex items-center justify-center">
+                  {/* Orbital Astrolabe Portrait */}
+                  <div className="relative shrink-0 w-36 h-36 md:w-40 md:h-40 flex items-center justify-center">
                     <span className="absolute inset-0 rounded-full border border-dashed border-accent-blue/35 animate-spin [animation-duration:18s]" />
-                    <span className="absolute inset-2.5 rounded-full border border-metal-100/20" />
+                    <span className="absolute inset-2 rounded-full border border-metal-100/20" />
                     <span className="absolute -inset-2 rounded-full border border-accent-gold/20 animate-spin [animation-duration:28s] [animation-direction:reverse]" />
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent-blue/15 via-void/90 to-accent-violet/15 border border-accent-blue/45 flex flex-col items-center justify-center shadow-[0_0_24px_rgba(79,195,247,0.2)]">
-                      <span className="font-display text-2xl tracking-widest text-metal-100">
-                        {monogram}
-                      </span>
-                      <span className="font-hud text-[8px] tracking-[0.28em] text-accent-blue/80 mt-0.5">
-                        ORBIT // 00
-                      </span>
+                    <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden bg-gradient-to-br from-accent-blue/15 via-void/90 to-accent-violet/15 border border-accent-blue/45 flex flex-col items-center justify-center shadow-[0_0_24px_rgba(79,195,247,0.25)]">
+                      {headshotPath && !imgError ? (
+                        <img
+                          src={headshotPath}
+                          alt={name}
+                          onError={() => setImgError(true)}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      ) : (
+                        <>
+                          <span className="font-display text-2xl tracking-widest text-metal-100">
+                            {monogram}
+                          </span>
+                          <span className="font-hud text-[8px] tracking-[0.28em] text-accent-blue/80 mt-0.5">
+                            ORBIT // 00
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
 
