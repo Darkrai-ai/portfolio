@@ -37,7 +37,7 @@ export default function HudReadout() {
   const currentPlace = activeList[placeIndex % activeList.length] || activeList[0];
 
   return (
-    <div className="fixed bottom-6 right-6 z-[70] flex flex-col items-end opacity-60 pointer-events-none select-none">
+    <div className="fixed bottom-6 right-6 z-[70] hidden md:flex flex-col items-end opacity-60 pointer-events-none select-none">
       <div className="font-hud text-xs text-text-dim tracking-wider">
         <ScrambleText text={currentPlace.place} duration={950} perpetual={true} />
       </div>

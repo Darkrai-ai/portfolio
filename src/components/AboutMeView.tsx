@@ -148,7 +148,7 @@ export default function AboutMeView() {
           <div className="fixed bottom-0 inset-x-0 h-24 bg-gradient-to-t from-void/95 via-void/55 to-transparent z-[65] pointer-events-none" />
 
           {/* Scrollable Architectural Dossier Stream over the 3D Celestial Orrery */}
-          <div className="min-h-screen w-full flex flex-col items-center pt-14 md:pt-16 pb-[42vh] px-6">
+          <div className="min-h-screen w-full flex flex-col items-center pt-16 md:pt-16 pb-[42vh] px-4 md:px-6">
             {/* Dossier Header (Scrolls naturally with the dossier so it never overlaps content) */}
             <header className="w-full max-w-4xl mx-auto mb-12 md:mb-16 flex flex-col items-center text-center pointer-events-none select-none">
               <div className="flex items-center gap-3 md:gap-4">
@@ -163,7 +163,7 @@ export default function AboutMeView() {
                 <span className="w-8 md:w-14 h-[1px] bg-gradient-to-l from-transparent to-metal-100/35" />
               </div>
 
-              <h1 className="mt-2 font-display text-4xl md:text-[3.2rem] leading-none tracking-[0.2em] uppercase text-metal-100 drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)]">
+              <h1 className="mt-2 font-display text-3xl md:text-[3.2rem] leading-none tracking-[0.14em] md:tracking-[0.2em] uppercase text-metal-100 drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)]">
                 <ScrambleText
                   text={name.toUpperCase()}
                   duration={520}
@@ -382,18 +382,18 @@ export default function AboutMeView() {
                   href={`mailto:${contactEmail}`}
                   onMouseEnter={() => audioManager.play('hover')}
                   onClick={() => audioManager.play('click')}
-                  className="group relative w-full py-8 px-6 border-y border-metal-100/15 bg-gradient-to-r from-transparent via-void/65 to-transparent backdrop-blur-[4px] hover:border-accent-blue/50 transition-all"
+                  className="group relative w-full py-6 md:py-8 px-4 md:px-6 border-y border-metal-100/15 bg-gradient-to-r from-transparent via-void/65 to-transparent backdrop-blur-[4px] hover:border-accent-blue/50 transition-all"
                 >
                   <span className="block font-hud text-[10px] tracking-[0.34em] uppercase text-metal-400/70 mb-2">
                     DIRECT CHANNEL // CLICK TO DISPATCH
                   </span>
-                  <span className="font-display text-xl sm:text-2xl md:text-3xl tracking-[0.12em] uppercase text-metal-100 group-hover:text-accent-blue group-hover:[text-shadow:0_0_20px_rgba(79,195,247,0.45)] transition-all">
+                  <span className="font-display text-base sm:text-2xl md:text-3xl tracking-[0.06em] md:tracking-[0.12em] uppercase text-metal-100 group-hover:text-accent-blue group-hover:[text-shadow:0_0_20px_rgba(79,195,247,0.45)] transition-all break-all sm:break-normal">
                     {contactEmail}
                   </span>
                 </a>
 
                 {/* Flat Perspective Social & Resume Plates (Matching Main Menu Flat Projects) */}
-                <div className="w-full mt-8 flex flex-wrap items-end justify-center gap-4 md:gap-6 [perspective:950px]">
+                <div className="w-full mt-8 flex flex-wrap items-end justify-center gap-3 md:gap-6 [perspective:950px]">
                   {socialLinks &&
                     socialLinks.map((link, idx) => (
                       <a
@@ -403,7 +403,7 @@ export default function AboutMeView() {
                         rel="noopener noreferrer"
                         onMouseEnter={() => audioManager.play('hover')}
                         onClick={() => audioManager.play('click')}
-                        className="group relative text-left px-6 py-3.5 min-w-[180px] md:min-w-[205px]
+                        className="group relative text-left px-4 md:px-6 py-3 md:py-3.5 min-w-[145px] md:min-w-[205px]
                                    bg-gradient-to-t from-metal-100/[0.07] via-metal-100/[0.02] to-transparent
                                    hover:from-accent-blue/[0.15] hover:via-accent-blue/[0.04]
                                    backdrop-blur-[3px]
@@ -436,7 +436,7 @@ export default function AboutMeView() {
                       download
                       onMouseEnter={() => audioManager.play('hover')}
                       onClick={() => audioManager.play('click')}
-                      className="group relative text-left px-6 py-3.5 min-w-[200px] md:min-w-[225px]
+                      className="group relative text-left px-4 md:px-6 py-3 md:py-3.5 min-w-[145px] md:min-w-[225px]
                                  bg-gradient-to-t from-accent-gold/[0.12] via-accent-gold/[0.03] to-transparent
                                  hover:from-accent-gold/[0.22] hover:via-accent-gold/[0.07]
                                  backdrop-blur-[3px]
@@ -470,7 +470,7 @@ export default function AboutMeView() {
           {/* Fixed Bottom-Center Dossier Navigation & Telemetry Rail (Matches Main Menu Rail) */}
           <nav
             aria-label="Dossier section navigation"
-            className="fixed bottom-6 md:bottom-7 left-[48.5%] -translate-x-1/2 z-[70] px-4 py-2 bg-void/65 backdrop-blur-[6px] border-t border-metal-100/15 flex items-center gap-2 sm:gap-4 select-none"
+            className="fixed bottom-4 md:bottom-7 left-1/2 md:left-[48.5%] -translate-x-1/2 z-[70] max-w-[calc(100vw-16px)] md:max-w-none px-2 md:px-4 py-1.5 md:py-2 bg-void/65 backdrop-blur-[6px] border-t border-metal-100/15 flex items-center justify-center gap-0.5 sm:gap-4 select-none"
           >
             {SECTIONS.map((sec) => {
               const isActive = activeSection === sec.id;
@@ -480,7 +480,7 @@ export default function AboutMeView() {
                   type="button"
                   onClick={() => scrollToSection(sec.id)}
                   onMouseEnter={() => audioManager.play('hover')}
-                  className={`relative px-2 py-1 font-hud text-[10px] tracking-[0.2em] uppercase transition-colors cursor-pointer focus:outline-none ${
+                  className={`relative px-1.5 md:px-2 py-1 font-hud text-[8.5px] md:text-[10px] tracking-[0.08em] md:tracking-[0.2em] uppercase transition-colors cursor-pointer focus:outline-none ${
                     isActive
                       ? 'text-metal-100'
                       : 'text-metal-400/50 hover:text-metal-100/85'
@@ -501,7 +501,7 @@ export default function AboutMeView() {
               );
             })}
 
-            <span className="h-3 w-[1px] bg-metal-100/15 mx-1" />
+            <span className="h-3 w-[1px] bg-metal-100/15 mx-0.5 md:mx-1" />
 
             <button
               type="button"
@@ -510,9 +510,10 @@ export default function AboutMeView() {
                 exitAboutMe();
               }}
               onMouseEnter={() => audioManager.play('hover')}
-              className="px-2 py-1 font-hud text-[10px] tracking-[0.22em] uppercase text-accent-blue hover:text-metal-100 transition-colors cursor-pointer focus:outline-none"
+              className="px-1.5 md:px-2 py-1 font-hud text-[8.5px] md:text-[10px] tracking-[0.1em] md:tracking-[0.22em] uppercase text-accent-blue hover:text-metal-100 transition-colors cursor-pointer focus:outline-none shrink-0"
             >
-              ESC // ORBIT
+              <span className="md:hidden">ORBIT</span>
+              <span className="hidden md:inline">ESC // ORBIT</span>
             </button>
           </nav>
         </motion.div>

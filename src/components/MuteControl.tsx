@@ -28,7 +28,7 @@ export function MuteControl() {
       onClick={handleToggle}
       onMouseEnter={() => audioManager.play('hover')}
       aria-label={muted ? 'Unmute audio' : 'Mute audio'}
-      className="fixed top-7 right-7 z-[70] group flex items-center gap-2.5 px-3 py-1.5 cursor-pointer select-none
+      className="fixed top-4 right-4 md:top-7 md:right-7 z-[70] group flex items-center gap-2 md:gap-2.5 px-2 py-1 md:px-3 md:py-1.5 cursor-pointer select-none
                  text-metal-100/80 hover:text-accent-blue transition-all duration-300 focus:outline-none"
     >
       <span className="hidden sm:inline font-hud text-[9px] tracking-[0.28em] uppercase text-metal-400/65 group-hover:text-accent-blue transition-colors">

@@ -378,17 +378,19 @@ const IntroSequence: React.FC = () => {
         });
       }
 
-      // Compute exact GPU scale & translation to land on top-7 left-7 (28px, 28px) at 20px (1.25rem) font size
+      // Compute exact GPU scale & translation to land on top-4 left-4 (16px) on mobile or top-7 left-7 (28px) on PC
+      const isMobileViewport = window.innerWidth < 768;
+      const targetFontSize = isMobileViewport ? 16 : 20;
+      const targetCornerOffset = isMobileViewport ? 16 : 28;
+
       const rect = textEl.getBoundingClientRect();
       const computedFontSize = parseFloat(window.getComputedStyle(textEl).fontSize) || 80;
-      const targetScale = 20 / computedFontSize;
+      const targetScale = targetFontSize / computedFontSize;
 
-      // With transformOrigin: 'center center', the scaled top-left corner will be at:
-      // centerX + dx - (rect.width * targetScale) / 2 = 28
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-      const targetCenterX = 28 + (rect.width * targetScale) / 2;
-      const targetCenterY = 28 + (rect.height * targetScale) / 2;
+      const targetCenterX = targetCornerOffset + (rect.width * targetScale) / 2;
+      const targetCenterY = targetCornerOffset + (rect.height * targetScale) / 2;
 
       const dx = targetCenterX - centerX;
       const dy = targetCenterY - centerY;
@@ -437,7 +439,7 @@ const IntroSequence: React.FC = () => {
       {/* Center Wordmark ("Utsaphire" scrambles first, then the shooting star flies in and becomes the ".") */}
       <div
         ref={textRef}
-        className="text-metal-100 font-display text-6xl md:text-8xl whitespace-nowrap select-none z-[101] will-change-transform"
+        className="text-metal-100 font-display text-4xl sm:text-6xl md:text-8xl whitespace-nowrap select-none z-[101] will-change-transform"
       >
         <span ref={wordSpanRef}>Utsaphire</span>
         <span

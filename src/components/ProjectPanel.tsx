@@ -74,11 +74,37 @@ export default function ProjectPanel() {
       }
     };
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (e.changedTouches.length !== 1) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) {
+          handleNext();
+        } else {
+          handlePrev();
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [view, focusedProjectId, handleNext, handlePrev, handleClose]);
 
@@ -95,20 +121,20 @@ export default function ProjectPanel() {
   return (
     <>
       {/* Top-Center Scrambling Project Title & Tech Telemetry (No Frosted Glass, Matches Main Menu) */}
-      <header className="fixed top-6 md:top-7 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-center pointer-events-none select-none w-full max-w-5xl px-6">
-        <div className="flex items-center gap-3 md:gap-4">
-          <span className="w-8 md:w-14 h-[1px] bg-gradient-to-r from-transparent to-accent-gold/45" />
-          <span className="font-hud text-[10px] md:text-[11px] tracking-[0.34em] uppercase text-metal-400/85 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+      <header className="fixed top-14 md:top-7 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center text-center pointer-events-none select-none w-full max-w-5xl px-4 md:px-6">
+        <div className="flex items-center gap-2 md:gap-4">
+          <span className="w-6 md:w-14 h-[1px] bg-gradient-to-r from-transparent to-accent-gold/45" />
+          <span className="font-hud text-[9px] md:text-[11px] tracking-[0.22em] md:tracking-[0.34em] uppercase text-metal-400/85 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
             <ScrambleText
               text={`SYSTEM ${indexCode} / ${totalCode}  //  ORBIT: ${planetNamesText}`}
               duration={420}
               charSet="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/:"
             />
           </span>
-          <span className="w-8 md:w-14 h-[1px] bg-gradient-to-l from-transparent to-accent-gold/45" />
+          <span className="w-6 md:w-14 h-[1px] bg-gradient-to-l from-transparent to-accent-gold/45" />
         </div>
 
-        <h1 className="mt-1.5 font-display text-2xl sm:text-3xl md:text-[2.45rem] leading-tight tracking-[0.14em] uppercase text-metal-100 drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)]">
+        <h1 className="mt-1 md:mt-1.5 font-display text-xl sm:text-3xl md:text-[2.45rem] leading-tight tracking-[0.1em] md:tracking-[0.14em] uppercase text-metal-100 drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)]">
           <ScrambleText
             text={project.title.toUpperCase()}
             duration={480}
@@ -116,9 +142,9 @@ export default function ProjectPanel() {
           />
         </h1>
 
-        <div className="w-28 md:w-44 h-[1px] bg-gradient-to-r from-transparent via-accent-gold/55 to-transparent my-2" />
+        <div className="w-24 md:w-44 h-[1px] bg-gradient-to-r from-transparent via-accent-gold/55 to-transparent my-1.5 md:my-2" />
 
-        <div className="font-hud text-xs md:text-sm tracking-[0.24em] uppercase text-accent-gold drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
+        <div className="font-hud text-[10px] md:text-sm tracking-[0.18em] md:tracking-[0.24em] uppercase text-accent-gold drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
           <ScrambleText
             text={projectTechs.join('   •   ')}
             duration={540}
@@ -130,7 +156,7 @@ export default function ProjectPanel() {
       {/* Bottom-Center Architectural Specification Deck & Flat Project Step Rail */}
       <section
         aria-label="Project specifications and navigation"
-        className="fixed bottom-5 md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-3xl px-12 sm:px-14 flex flex-col items-center pointer-events-none select-none"
+        className="fixed bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-3xl px-9 sm:px-14 flex flex-col items-center pointer-events-none select-none"
       >
         <div className="relative w-full max-w-2xl">
           {/* Prev Button — Pure arrow icon with NO frosted glass behind it */}
@@ -138,10 +164,10 @@ export default function ProjectPanel() {
             type="button"
             onClick={handlePrev}
             onMouseEnter={() => audioManager.play('hover')}
-            className="pointer-events-auto absolute top-1/2 -left-10 sm:-left-12 -translate-y-1/2 w-10 h-10 text-metal-100/80 hover:text-accent-blue hover:scale-125 flex items-center justify-center transition-all cursor-pointer drop-shadow-[0_0_12px_rgba(79,195,247,0.45)] focus:outline-none"
+            className="pointer-events-auto absolute top-1/2 -left-8 sm:-left-12 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 text-metal-100/80 hover:text-accent-blue hover:scale-125 flex items-center justify-center transition-all cursor-pointer drop-shadow-[0_0_12px_rgba(79,195,247,0.45)] focus:outline-none"
             aria-label="Previous project"
           >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -151,10 +177,10 @@ export default function ProjectPanel() {
             type="button"
             onClick={handleNext}
             onMouseEnter={() => audioManager.play('hover')}
-            className="pointer-events-auto absolute top-1/2 -right-10 sm:-right-12 -translate-y-1/2 w-10 h-10 text-metal-100/80 hover:text-accent-blue hover:scale-125 flex items-center justify-center transition-all cursor-pointer drop-shadow-[0_0_12px_rgba(79,195,247,0.45)] focus:outline-none"
+            className="pointer-events-auto absolute top-1/2 -right-8 sm:-right-12 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 text-metal-100/80 hover:text-accent-blue hover:scale-125 flex items-center justify-center transition-all cursor-pointer drop-shadow-[0_0_12px_rgba(79,195,247,0.45)] focus:outline-none"
             aria-label="Next project"
           >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -166,7 +192,7 @@ export default function ProjectPanel() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.28, ease: 'easeOut' }}
-              className="pointer-events-auto relative w-full px-6 sm:px-8 py-5
+              className="pointer-events-auto relative w-full px-4 sm:px-8 py-3.5 sm:py-5
                          bg-gradient-to-t from-void/80 via-void/55 to-void/30
                          backdrop-blur-[5px] border-y border-metal-100/15"
             >
@@ -242,18 +268,18 @@ export default function ProjectPanel() {
         </div>
 
         {/* Bottom 10-Project Flat Step Rail (Matches Main Menu & About Me Rail) */}
-        <div className="mt-3.5 pt-2 border-t border-metal-100/10 flex items-center gap-1 sm:gap-2 pointer-events-auto">
+        <div className="mt-2.5 sm:mt-3.5 pt-2 border-t border-metal-100/10 flex items-center gap-0.5 sm:gap-2 pointer-events-auto">
           <button
             type="button"
             onClick={handlePrev}
             onMouseEnter={() => audioManager.play('hover')}
             aria-label="Previous project"
-            className="px-2 py-1 text-metal-400/65 hover:text-accent-blue transition-colors cursor-pointer font-hud text-xs"
+            className="px-1.5 sm:px-2 py-1 text-metal-400/65 hover:text-accent-blue transition-colors cursor-pointer font-hud text-xs"
           >
             ‹
           </button>
 
-          <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="flex items-center gap-0.5 sm:gap-1.5">
             {projects.map((p, idx) => {
               const isActive = p.id === focusedProjectId;
               const numCode = String(idx + 1).padStart(2, '0');
@@ -269,7 +295,7 @@ export default function ProjectPanel() {
                   }}
                   onMouseEnter={() => audioManager.play('hover')}
                   title={p.title}
-                  className={`relative px-2 py-1 font-hud text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 cursor-pointer focus:outline-none ${
+                  className={`relative px-1.5 sm:px-2 py-1 font-hud text-[9px] sm:text-[10px] tracking-[0.14em] sm:tracking-[0.2em] uppercase transition-colors duration-300 cursor-pointer focus:outline-none ${
                     isActive
                       ? 'text-metal-100'
                       : 'text-metal-400/45 hover:text-metal-100/80'
@@ -293,20 +319,21 @@ export default function ProjectPanel() {
             onClick={handleNext}
             onMouseEnter={() => audioManager.play('hover')}
             aria-label="Next project"
-            className="px-2 py-1 text-metal-400/65 hover:text-accent-blue transition-colors cursor-pointer font-hud text-xs"
+            className="px-1.5 sm:px-2 py-1 text-metal-400/65 hover:text-accent-blue transition-colors cursor-pointer font-hud text-xs"
           >
             ›
           </button>
 
-          <span className="h-3 w-[1px] bg-metal-100/15 mx-1" />
+          <span className="h-3 w-[1px] bg-metal-100/15 mx-0.5 sm:mx-1" />
 
           <button
             type="button"
             onClick={handleClose}
             onMouseEnter={() => audioManager.play('hover')}
-            className="px-2 py-1 font-hud text-[10px] tracking-[0.22em] uppercase text-accent-blue hover:text-metal-100 transition-colors cursor-pointer focus:outline-none"
+            className="px-1.5 sm:px-2 py-1 font-hud text-[9px] sm:text-[10px] tracking-[0.16em] sm:tracking-[0.22em] uppercase text-accent-blue hover:text-metal-100 transition-colors cursor-pointer focus:outline-none whitespace-nowrap"
           >
-            RETURN // ORBIT
+            <span className="sm:hidden">ORBIT</span>
+            <span className="hidden sm:inline">RETURN // ORBIT</span>
           </button>
         </div>
       </section>

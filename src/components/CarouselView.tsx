@@ -361,6 +361,7 @@ export default function CarouselView() {
   const setIsSpinning = useAppStore((s) => s.setIsSpinning);
   const closeProject = useAppStore((s) => s.closeProject);
   const reducedMotion = useAppStore((s) => s.reducedMotion);
+  const isMobile = useAppStore((s) => s.isMobile);
 
   const { gl, camera } = useThree();
   const len = sortedSkills.length;
@@ -407,8 +408,8 @@ export default function CarouselView() {
       // Eye-level frontal stage view so the active project's planets swoop in & rotate prominently above the project card
       gsap.to(camera.position, {
         x: 0,
-        y: 0.28,
-        z: 7.6,
+        y: isMobile ? 0.35 : 0.28,
+        z: isMobile ? 11.2 : 7.6,
         duration: reducedMotion ? 0.2 : 1.15,
         ease: 'power3.inOut',
         onUpdate: () => {
@@ -419,8 +420,8 @@ export default function CarouselView() {
       // Symmetrically centered 3D Celestial Orrery vantage point
       gsap.to(camera.position, {
         x: 0,
-        y: 9.5,
-        z: 13.0,
+        y: isMobile ? 11.5 : 9.5,
+        z: isMobile ? 16.5 : 13.0,
         duration: reducedMotion ? 0.2 : 1.5,
         ease: 'power3.inOut',
         onUpdate: () => {
@@ -431,8 +432,8 @@ export default function CarouselView() {
       // Eye-level front view facing the carousel spiral
       gsap.to(camera.position, {
         x: 0,
-        y: 0.25,
-        z: 7.2,
+        y: isMobile ? 0.18 : 0.25,
+        z: isMobile ? 9.2 : 7.2,
         duration: reducedMotion ? 0.2 : 1.25,
         ease: 'power3.inOut',
         onUpdate: () => {
@@ -440,9 +441,9 @@ export default function CarouselView() {
         },
       });
     }
-  }, [view, camera, reducedMotion]);
+  }, [view, camera, reducedMotion, isMobile]);
 
-  // Free-spinning inertia scroll wheel + keyboard arrow navigation in Carousel View
+  // Free-spinning inertia scroll wheel + touch swipe + keyboard arrow navigation in Carousel View
   useEffect(() => {
     if (view !== 'carousel') return;
 
@@ -462,6 +463,60 @@ export default function CarouselView() {
       }
     };
 
+    let touchLastX = 0;
+    let touchLastY = 0;
+    let touchDragging = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      touchLastX = e.touches[0].clientX;
+      touchLastY = e.touches[0].clientY;
+      touchDragging = true;
+      lastInteraction.current = Date.now();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchDragging || e.touches.length !== 1) return;
+      e.preventDefault();
+      const x = e.touches[0].clientX;
+      const y = e.touches[0].clientY;
+      const dx = x - touchLastX;
+      const dy = y - touchLastY;
+      touchLastX = x;
+      touchLastY = y;
+
+      // Support both horizontal swipe (natural left/right) and vertical swipe
+      const primaryDelta = Math.abs(dx) >= Math.abs(dy) ? -dx : -dy;
+      if (Math.abs(primaryDelta) < 0.5) return;
+
+      const now = Date.now();
+      lastInteraction.current = now;
+      lastWheelTime.current = now;
+
+      const clamped = THREE.MathUtils.clamp(primaryDelta, -80, 80);
+      focusOffset.current += clamped * 0.0042;
+      targetOffset.current = focusOffset.current;
+      scrollVelocity.current = THREE.MathUtils.clamp(
+        scrollVelocity.current * 0.5 + clamped * 0.0011,
+        -0.12,
+        0.12
+      );
+
+      if (Math.abs(primaryDelta) > 10) {
+        audioManager.play('scroll');
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!touchDragging) return;
+      touchDragging = false;
+      lastInteraction.current = Date.now();
+      if (Math.abs(scrollVelocity.current) < 0.004) {
+        scrollVelocity.current = 0;
+        targetOffset.current = Math.round(focusOffset.current);
+      }
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         scrollVelocity.current = 0;
@@ -478,10 +533,16 @@ export default function CarouselView() {
 
     const domElement = gl.domElement;
     domElement.addEventListener('wheel', handleWheel, { passive: false });
+    domElement.addEventListener('touchstart', handleTouchStart, { passive: true });
+    domElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+    domElement.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       domElement.removeEventListener('wheel', handleWheel);
+      domElement.removeEventListener('touchstart', handleTouchStart);
+      domElement.removeEventListener('touchmove', handleTouchMove);
+      domElement.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [gl, view]);
