@@ -23,7 +23,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Utsaphire — Space Portfolio",
+  title: "Utsaphire",
   description:
     "A cinematic 3D portfolio exploring technical skills through an interactive solar system.",
 };
