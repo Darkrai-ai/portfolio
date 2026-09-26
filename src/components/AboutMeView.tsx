@@ -431,36 +431,45 @@ export default function AboutMeView() {
                     ))}
 
                   {resumePath && (
-                    <a
-                      href={resumePath}
-                      download
-                      onMouseEnter={() => audioManager.play('hover')}
-                      onClick={() => audioManager.play('click')}
+                    <div
+                      role="status"
+                      aria-disabled="true"
+                      title="Resume currently locked"
                       className="group relative text-left px-4 md:px-6 py-3 md:py-3.5 min-w-[145px] md:min-w-[225px]
-                                 bg-gradient-to-t from-accent-gold/[0.12] via-accent-gold/[0.03] to-transparent
-                                 hover:from-accent-gold/[0.22] hover:via-accent-gold/[0.07]
-                                 backdrop-blur-[3px]
-                                 [transform:rotateX(22deg)] hover:[transform:rotateX(0deg)_translateY(-4px)]
+                                 bg-gradient-to-t from-metal-100/[0.04] via-metal-100/[0.01] to-transparent
+                                 backdrop-blur-[3px] opacity-65 cursor-not-allowed select-none
+                                 [transform:rotateX(22deg)]
                                  origin-bottom transition-all duration-300 ease-out"
                     >
-                      <span className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-accent-gold/50 group-hover:border-accent-gold transition-colors" />
-                      <span className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-accent-gold/50 group-hover:border-accent-gold transition-colors" />
-                      <span className="absolute bottom-0 inset-x-2 h-[1.5px] bg-gradient-to-r from-transparent via-accent-gold/55 to-transparent group-hover:via-accent-gold group-hover:shadow-[0_0_16px_#FFC857] transition-all duration-300" />
+                      <span className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-accent-gold/35" />
+                      <span className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-accent-gold/35" />
+                      <span className="absolute bottom-0 inset-x-2 h-[1.5px] bg-gradient-to-r from-transparent via-accent-gold/35 to-transparent" />
 
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col">
-                          <span className="font-hud text-[9px] tracking-[0.28em] uppercase text-accent-gold/80">
-                            DOSSIER // PDF
+                          <span className="font-hud text-[9px] tracking-[0.28em] uppercase text-accent-gold/70">
+                            DOSSIER // LOCKED
                           </span>
-                          <span className="mt-0.5 font-display text-sm md:text-base tracking-[0.1em] uppercase text-metal-100 group-hover:text-accent-gold transition-colors">
+                          <span className="mt-0.5 font-display text-sm md:text-base tracking-[0.1em] uppercase text-metal-400">
                             RESUME
                           </span>
                         </div>
-                        <span className="text-accent-gold/70 group-hover:text-accent-gold group-hover:translate-y-0.5 transition-all text-sm">
-                          ↓
-                        </span>
+                        <svg
+                          className="w-4 h-4 text-accent-gold/65 shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.8}
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          />
+                        </svg>
                       </div>
-                    </a>
+                    </div>
                   )}
                 </div>
               </section>
