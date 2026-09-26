@@ -15,7 +15,7 @@ export const skills: Skill[] = [
     order: 1,
     planetName: 'Mercury',
     groupName: 'Frontend Core',
-    techs: ['JavaScript', 'React'],
+    techs: ['JavaScript', 'TypeScript', 'React'],
     blurb: 'The fastest planet for the fastest frameworks — building interactive UIs from the ground up.',
     modelPath: '/models/planets/mercury.glb',
     accentColor: '#4FC3F7',

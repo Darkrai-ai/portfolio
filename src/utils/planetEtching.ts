@@ -3,6 +3,7 @@
  */
 export const TECH_LOGO_PATHS: Record<string, string> = {
   JavaScript: '/logos/javascript.svg',
+  TypeScript: '/logos/typescript.svg',
   React: '/logos/react.svg',
   CSS: '/logos/css.svg',
   Tailwind: '/logos/tailwind.svg',
