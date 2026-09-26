@@ -28,10 +28,10 @@ export const metadata: Metadata = {
     "A cinematic 3D portfolio exploring technical skills through an interactive solar system.",
   icons: {
     icon: [
-      { url: "/icon.png", type: "image/png", sizes: "256x256" },
+      { url: "/icon.png?v=2", type: "image/png", sizes: "256x256" },
     ],
-    shortcut: "/icon.png",
-    apple: "/icon.png",
+    shortcut: "/icon.png?v=2",
+    apple: "/icon.png?v=2",
   },
 };
 

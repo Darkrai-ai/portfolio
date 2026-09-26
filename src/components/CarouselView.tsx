@@ -67,8 +67,47 @@ function CarouselOrbitTrack({ visible }: { visible: boolean }) {
 function getProjectStageTarget(
   activeIndex: number,
   activeCount: number,
-  elapsedTime: number
+  elapsedTime: number,
+  isMobile: boolean
 ): { pos: [number, number, number]; scale: number } {
+  if (isMobile) {
+    if (activeCount <= 1) {
+      return {
+        pos: [
+          Math.sin(elapsedTime * 0.8) * 0.08,
+          0.58 + Math.cos(elapsedTime * 1.0) * 0.05,
+          2.05,
+        ],
+        scale: 1.32,
+      };
+    }
+
+    if (activeCount === 2) {
+      const side = activeIndex === 0 ? -1 : 1;
+      const phase = activeIndex * Math.PI;
+      return {
+        pos: [
+          side * 0.86 + Math.cos(elapsedTime * 0.75 + phase) * 0.06,
+          0.58 + (activeIndex === 0 ? 0.14 : -0.1) + Math.sin(elapsedTime * 0.95 + phase) * 0.05,
+          1.95 + Math.sin(elapsedTime * 0.75 + phase) * 0.08,
+        ],
+        scale: 1.06,
+      };
+    }
+
+    const norm = (activeIndex / (activeCount - 1)) * 2 - 1; // -1 .. +1
+    const phase = activeIndex * ((Math.PI * 2) / activeCount);
+    const isCenter = Math.abs(norm) < 0.15;
+    return {
+      pos: [
+        norm * 0.96 + Math.cos(elapsedTime * 0.7 + phase) * 0.05,
+        (isCenter ? 1.02 : 0.24) + Math.sin(elapsedTime * 0.9 + phase) * 0.04,
+        (isCenter ? 1.95 : 1.78) + Math.sin(elapsedTime * 0.7 + phase) * 0.07,
+      ],
+      scale: 0.95,
+    };
+  }
+
   if (activeCount <= 1) {
     return {
       pos: [
@@ -200,6 +239,7 @@ interface PlanetItemProps {
   isFocused: boolean;
   isHighlighted: boolean;
   isDimmed: boolean;
+  isMobile: boolean;
   onSelectPlanet: (skillId: string, index: number) => void;
 }
 
@@ -215,6 +255,7 @@ function PlanetItem({
   isFocused,
   isHighlighted,
   isDimmed,
+  isMobile,
   onSelectPlanet,
 }: PlanetItemProps) {
   const ref = useRef<THREE.Group>(null);
@@ -243,7 +284,8 @@ function PlanetItem({
         const { pos, scale } = getProjectStageTarget(
           activeIndex,
           activeCount,
-          state.clock.elapsedTime
+          state.clock.elapsedTime,
+          isMobile
         );
         stagePosRef.current.lerp(new THREE.Vector3(...pos), Math.min(1, delta * 5.5));
         stageScaleRef.current = THREE.MathUtils.lerp(
@@ -272,7 +314,7 @@ function PlanetItem({
 
       const curX =
         THREE.MathUtils.lerp(outX, stagePosRef.current.x, easePos) +
-        sideSign * swirl * 3.2;
+        sideSign * swirl * (isMobile ? 1.05 : 3.2);
       const curY =
         THREE.MathUtils.lerp(outY, stagePosRef.current.y, easePos) +
         swirl * 0.45;
@@ -684,6 +726,7 @@ export default function CarouselView() {
             isFocused={isFocused}
             isHighlighted={isHighlighted}
             isDimmed={isDimmed}
+            isMobile={isMobile}
             onSelectPlanet={handleSelectPlanet}
           />
         );
