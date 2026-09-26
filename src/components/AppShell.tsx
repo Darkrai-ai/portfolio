@@ -18,11 +18,22 @@ const ProjectPanel = dynamic(() => import('./ProjectPanel'), { ssr: false });
 const AboutMeView = dynamic(() => import('./AboutMeView'), { ssr: false });
 const MobileInterstitial = dynamic(() => import('./MobileInterstitial'), { ssr: false });
 
+let hasLoggedConsoleMessage = false;
+
 export default function AppShell() {
   const setIsMobile = useAppStore((s) => s.setIsMobile);
   const setReducedMotion = useAppStore((s) => s.setReducedMotion);
 
   useEffect(() => {
+    if (!hasLoggedConsoleMessage) {
+      hasLoggedConsoleMessage = true;
+      console.log(
+        "%c// SIGNAL INTERCEPTED — ORBIT 00\n%cIf you're here, you probably decoded the coordinates.",
+        'color: #4FC3F7; font-family: monospace; font-size: 11px; letter-spacing: 0.18em; font-weight: bold;',
+        'color: #E8ECF4; font-family: monospace; font-size: 13px; line-height: 1.8;'
+      );
+    }
+
     // Detect mobile and reduced motion on mount
     setIsMobile(detectIsMobile());
     setReducedMotion(detectReducedMotion());
