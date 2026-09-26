@@ -26,6 +26,13 @@ export const metadata: Metadata = {
   title: "Utsaphire",
   description:
     "A cinematic 3D portfolio exploring technical skills through an interactive solar system.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "256x256" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
