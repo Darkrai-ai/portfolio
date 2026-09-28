@@ -1,36 +1,58 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import ScrambleText from './ScrambleText';
 import { corePlaces, aboutPlaces } from '../data/places';
 
+function createShuffledDeck(length: number, avoidFirst?: number): number[] {
+  const deck = Array.from({ length }, (_, i) => i);
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  if (length > 1 && avoidFirst !== undefined && deck[0] === avoidFirst) {
+    const swapIdx = 1 + Math.floor(Math.random() * (length - 1));
+    [deck[0], deck[swapIdx]] = [deck[swapIdx], deck[0]];
+  }
+  return deck;
+}
+
 export default function HudReadout() {
   const view = useAppStore((s) => s.view);
-  const activeList = view === 'about' ? aboutPlaces : corePlaces;
+  const isAbout = view === 'about';
+  const activeList = isAbout ? aboutPlaces : corePlaces;
+
+  const deckRef = useRef<number[]>([]);
+  const currentIdxRef = useRef<number>(0);
   const [placeIndex, setPlaceIndex] = useState(0);
 
-  // Reset to a valid random index when switching between About Me and other views
+  // Build a fresh shuffled deck only when switching between Core views and About Me
   useEffect(() => {
-    setPlaceIndex(Math.floor(Math.random() * activeList.length));
-  }, [view, activeList.length]);
+    if (activeList.length === 0) return;
+    const initialDeck = createShuffledDeck(activeList.length);
+    const first = initialDeck.shift() ?? 0;
+    deckRef.current = initialDeck;
+    currentIdxRef.current = first;
+    setPlaceIndex(first);
+  }, [isAbout, activeList.length]);
+
+  const isIntro = view === 'intro';
 
   useEffect(() => {
-    if (view === 'intro' || activeList.length === 0) return;
+    if (isIntro || activeList.length <= 1) return;
 
     const interval = setInterval(() => {
-      setPlaceIndex((prev) => {
-        if (activeList.length <= 1) return 0;
-        let next = prev;
-        while (next === prev) {
-          next = Math.floor(Math.random() * activeList.length);
-        }
-        return next;
-      });
+      if (deckRef.current.length === 0) {
+        deckRef.current = createShuffledDeck(activeList.length, currentIdxRef.current);
+      }
+      const next = deckRef.current.shift() ?? 0;
+      currentIdxRef.current = next;
+      setPlaceIndex(next);
     }, 3400);
 
     return () => clearInterval(interval);
-  }, [view, activeList]);
+  }, [isIntro, isAbout, activeList.length]);
 
   if (view === 'intro' || activeList.length === 0) return null;
 
