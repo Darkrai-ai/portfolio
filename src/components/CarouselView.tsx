@@ -158,44 +158,115 @@ function getDeepSpaceExitPosition(order: number): [number, number, number] {
 }
 
 /**
- * Symmetrically centered 3D Celestial Orrery parameters for the About Me view.
- * Tilted cleanly toward the camera (tiltZ = 0) so the orbits are dead-center on screen.
+ * NASA JPL J2000.0 Keplerian Ephemeris Elements (Standish / JPL Solar System Dynamics):
+ * - L0: Mean longitude at J2000.0 epoch (deg)
+ * - Ldot: Mean longitude rate per Julian century (deg / 36525 days)
+ * - wBar: Longitude of perihelion (deg)
+ * - e: Orbital eccentricity
+ * - iDeg: Orbital inclination to the ecliptic (deg)
+ * - nodeDeg: Longitude of ascending node (deg)
+ * - relAngularSpeed: Relative Keplerian orbital angular rate (Earth = 1.0)
  */
-function getOrbitParams(order: number) {
-  const radius = 2.0 + (order - 1) * 0.78;
-  const speed = 0.36 / Math.pow(order, 0.3);
-  const baseAngle = ((order - 1) / 8) * Math.PI * 2;
-  const tiltX = 0.5;
-  return { radius, speed, baseAngle, tiltX };
+const JPL_PLANET_ELEMENTS: Record<
+  number,
+  {
+    L0: number;
+    Ldot: number;
+    wBar: number;
+    e: number;
+    iDeg: number;
+    nodeDeg: number;
+    relAngularSpeed: number;
+  }
+> = {
+  1: { L0: 252.2509, Ldot: 149472.6746, wBar: 77.4561, e: 0.20563, iDeg: 7.005, nodeDeg: 48.331, relAngularSpeed: 4.152 }, // Mercury
+  2: { L0: 181.9798, Ldot: 58517.8157, wBar: 131.5637, e: 0.00677, iDeg: 3.395, nodeDeg: 76.680, relAngularSpeed: 1.625 }, // Venus
+  3: { L0: 100.4665, Ldot: 35999.3729, wBar: 102.9373, e: 0.01671, iDeg: 0.000, nodeDeg: 0.000, relAngularSpeed: 1.000 },  // Earth
+  4: { L0: 355.4330, Ldot: 19140.2993, wBar: 336.0602, e: 0.09340, iDeg: 1.850, nodeDeg: 49.558, relAngularSpeed: 0.531 }, // Mars
+  5: { L0: 34.3515,  Ldot: 3034.9057,  wBar: 14.3312,  e: 0.04849, iDeg: 1.303, nodeDeg: 100.464, relAngularSpeed: 0.084 }, // Jupiter
+  6: { L0: 50.0774,  Ldot: 1222.1138,  wBar: 93.0572,  e: 0.05555, iDeg: 2.485, nodeDeg: 113.665, relAngularSpeed: 0.034 }, // Saturn
+  7: { L0: 314.0550, Ldot: 428.4677,   wBar: 173.0053, e: 0.04730, iDeg: 0.773, nodeDeg: 74.006, relAngularSpeed: 0.012 },  // Uranus
+  8: { L0: 304.3487, Ldot: 218.4862,   wBar: 48.1203,  e: 0.00859, iDeg: 1.770, nodeDeg: 131.784, relAngularSpeed: 0.006 }, // Neptune
+};
+
+const DEG_TO_RAD = Math.PI / 180;
+
+/**
+ * Computes the real-time heliocentric true longitude (radians) for a planet right now (Date.now())
+ * using the Equation of Center on NASA JPL J2000.0 elements (0 network requests, <0.01ms).
+ */
+function getRealTimeHeliocentricLongitudeRad(order: number, timestampMs = Date.now()): number {
+  const el = JPL_PLANET_ELEMENTS[order] || JPL_PLANET_ELEMENTS[3];
+  // Julian centuries T since J2000.0 (2000-01-01 12:00 UTC = JD 2451545.0)
+  const jd = timestampMs / 86400000 + 2440587.5;
+  const T = (jd - 2451545.0) / 36525.0;
+
+  const L = el.L0 + el.Ldot * T;
+  const M = (L - el.wBar) * DEG_TO_RAD;
+  const e = el.e;
+
+  // Equation of Center (up to O(e^3) for high precision even on eccentric Mercury/Mars)
+  const eqCenter =
+    (2 * e - 0.25 * e * e * e) * Math.sin(M) +
+    1.25 * e * e * Math.sin(2 * M) +
+    (13 / 12) * e * e * e * Math.sin(3 * M);
+
+  const trueLonRad = L * DEG_TO_RAD + eqCenter;
+  return ((trueLonRad % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
 }
 
-function getAboutOrbitPosition(order: number, elapsedTime: number): [number, number, number] {
-  const { radius, speed, baseAngle, tiltX } = getOrbitParams(order);
-  const angle = baseAngle + elapsedTime * speed;
+/**
+ * Symmetrically centered 3D Celestial Orrery parameters for the About Me view,
+ * anchored to each planet's real-time astronomical heliocentric longitude and orbital inclination.
+ */
+function getOrbitParams(order: number, timestampMs?: number) {
+  const el = JPL_PLANET_ELEMENTS[order] || JPL_PLANET_ELEMENTS[3];
+  const radius = 2.0 + (order - 1) * 0.78;
+  // Subtle time-lapse angular speed proportional to real Keplerian period so live positions stay recognizable
+  const speed = 0.038 * Math.pow(el.relAngularSpeed, 0.45);
+  const baseAngle = getRealTimeHeliocentricLongitudeRad(order, timestampMs);
+  const tiltX = 0.5;
+  const incRad = el.iDeg * DEG_TO_RAD;
+  const nodeRad = el.nodeDeg * DEG_TO_RAD;
+  return { radius, speed, baseAngle, tiltX, incRad, nodeRad };
+}
+
+function getAboutOrbitPosition(
+  order: number,
+  aboutElapsedSec: number,
+  timestampMs?: number
+): [number, number, number] {
+  const { radius, speed, baseAngle, tiltX, incRad, nodeRad } = getOrbitParams(order, timestampMs);
+  // Counter-clockwise heliocentric progression when viewed from above North Ecliptic Pole (+Y)
+  const angle = baseAngle + aboutElapsedSec * speed;
   const flatX = Math.cos(angle) * radius;
-  const flatZ = Math.sin(angle) * radius;
-  const y = -flatZ * Math.sin(tiltX);
-  const z = flatZ * Math.cos(tiltX);
+  const flatZ = -Math.sin(angle) * radius;
+  // Apply each planet's real orbital plane inclination relative to the ecliptic before camera tilt
+  const eclipticY = Math.sin(angle - nodeRad) * Math.sin(incRad) * radius;
+  const y = eclipticY * Math.cos(tiltX) - flatZ * Math.sin(tiltX);
+  const z = eclipticY * Math.sin(tiltX) + flatZ * Math.cos(tiltX);
   return [flatX, y, z];
 }
 
 /**
- * Delicate glowing 3D orbital trajectory rings centered symmetrically in the About Me view.
+ * Delicate glowing 3D orbital trajectory rings centered symmetrically in the About Me view,
+ * matching each planet's real ecliptic inclination.
  */
 function AboutOrbitRings({ visible }: { visible: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
 
   const orbitLines = useMemo(() => {
     return sortedSkills.map((skill) => {
-      const { radius, tiltX } = getOrbitParams(skill.order);
+      const { radius, tiltX, incRad, nodeRad } = getOrbitParams(skill.order);
       const segments = 128;
       const points: THREE.Vector3[] = [];
       for (let i = 0; i <= segments; i++) {
         const a = (i / segments) * Math.PI * 2;
         const fx = Math.cos(a) * radius;
-        const fz = Math.sin(a) * radius;
-        const fy = -fz * Math.sin(tiltX);
-        const rz = fz * Math.cos(tiltX);
+        const fz = -Math.sin(a) * radius;
+        const ecY = Math.sin(a - nodeRad) * Math.sin(incRad) * radius;
+        const fy = ecY * Math.cos(tiltX) - fz * Math.sin(tiltX);
+        const rz = ecY * Math.sin(tiltX) + fz * Math.cos(tiltX);
         points.push(new THREE.Vector3(fx, fy, rz));
       }
       const geo = new THREE.BufferGeometry().setFromPoints(points);
@@ -265,6 +336,8 @@ function PlanetItem({
   const spinImpulseRef = useRef(0);
   const prevProjectRef = useRef<string | null>(null);
   const prevViewLocalRef = useRef<ViewState>(view);
+  const aboutEnteredClockRef = useRef(0);
+  const aboutTimestampRef = useRef(Date.now());
 
   useFrame((state, delta) => {
     if (!ref.current) return;
@@ -344,6 +417,10 @@ function PlanetItem({
       return;
     }
 
+    if (view === 'about' && prevViewLocalRef.current !== 'about') {
+      aboutEnteredClockRef.current = state.clock.elapsedTime;
+      aboutTimestampRef.current = Date.now();
+    }
     prevViewLocalRef.current = view;
     ringPresenceRef.current = isHighlighted ? 1 : 0;
 
@@ -352,7 +429,8 @@ function PlanetItem({
     let targetRotX = 0;
 
     if (view === 'about') {
-      targetPos = getAboutOrbitPosition(skill.order, state.clock.elapsedTime);
+      const aboutElapsed = Math.max(0, state.clock.elapsedTime - aboutEnteredClockRef.current);
+      targetPos = getAboutOrbitPosition(skill.order, aboutElapsed, aboutTimestampRef.current);
       targetScale = 0.92;
       targetRotX = -0.35;
     } else {
