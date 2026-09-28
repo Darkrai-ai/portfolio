@@ -127,7 +127,7 @@ export const PLANET_CONFIG: Record<
     haloColor: '#FF5E36',
   },
   jupiter: {
-    sizeMultiplier: 1.22,
+    sizeMultiplier: 1.34,
     bumpScale: 0.15,
     roughness: 0.94,
     metalness: 0.0,
@@ -176,7 +176,7 @@ function getEnhancedPlanetMaps(
   logoImages: (HTMLImageElement | ImageBitmap | undefined)[],
   maxAniso: number
 ): { colorMap: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const skillId = `${skill.id}_${skill.techs.join('-')}_v9`;
+  const skillId = `${skill.id}_${skill.techs.join('-')}_v10`;
   if (enhancedMapCache[skillId]) {
     return enhancedMapCache[skillId];
   }

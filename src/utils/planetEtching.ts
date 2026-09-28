@@ -10,6 +10,12 @@ export const TECH_LOGO_PATHS: Record<string, string> = {
   'Next.js': '/logos/nextjs.svg',
   'Three.js': '/logos/threejs.svg',
   IoT: '/logos/iot.svg',
+  'Fusion 360': '/logos/fusion360.svg',
+  Blender: '/logos/blender.svg',
+  Docker: '/logos/docker.svg',
+  'Ubuntu Server': '/logos/ubuntu.svg',
+  Git: '/logos/git.svg',
+  GitHub: '/logos/github.svg',
   Flutter: '/logos/flutter.svg',
   Python: '/logos/python.svg',
   PyTorch: '/logos/pytorch.svg',
@@ -45,7 +51,7 @@ function getDarkLogoCanvas(img: HTMLImageElement | ImageBitmap): HTMLCanvasEleme
 }
 
 /**
- * Lightly engraves the official skill logo images into opposite hemispheres (x = 0.25*W and x = 0.75*W)
+ * Lightly engraves the official skill logo images evenly around the planet's equator
  * on both the color texture and the 3D bump map canvas.
  * Uses pure GPU-accelerated composite operations (zero ctx.shadowBlur or full-canvas ctx.filter).
  */
@@ -60,12 +66,14 @@ export function etchSkillsIntoPlanetCanvases(
 ) {
   if (!logoImages || logoImages.length === 0) return;
 
-  // If a planet has a single skill (e.g. Mars -> IoT), engrave it on both opposite hemispheres
-  // so it remains visible as the planet rotates; for 2 or 3 skills, space them evenly around the equator.
+  // If a planet has a single skill (e.g. Mercury -> Blender), engrave it on both opposite hemispheres
+  // so it remains visible as the planet rotates; for 2+ skills, space them evenly around the equator.
   const effectiveLogos =
     logoImages.length === 1 ? [logoImages[0], logoImages[0]] : logoImages;
   const count = effectiveLogos.length;
-  const size = count >= 3 ? height * 0.31 : height * 0.34;
+  const maxSlotSize = (width / count) * 0.76;
+  const baseSize = count >= 3 ? height * 0.31 : height * 0.34;
+  const size = Math.min(baseSize, maxSlotSize);
   const cy = height * 0.5; // Centered on the equator for zero aspect distortion
 
   const isCloudedOrBright =
@@ -180,7 +188,9 @@ export function carveCloudStormEyes(
   const effectiveLogos =
     logoImages.length === 1 ? [logoImages[0], logoImages[0]] : logoImages;
   const count = effectiveLogos.length;
-  const size = count >= 3 ? height * 0.31 : height * 0.34;
+  const maxSlotSize = (width / count) * 0.76;
+  const baseSize = count >= 3 ? height * 0.31 : height * 0.34;
+  const size = Math.min(baseSize, maxSlotSize);
   const cy = height * 0.5;
 
   for (let i = 0; i < count; i++) {
