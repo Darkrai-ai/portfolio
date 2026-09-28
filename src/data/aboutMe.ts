@@ -36,9 +36,10 @@ export const aboutMe = {
   funFacts: [
     'I can hold a conversation in 3 (almost 4) languages.',
     'My first line of code was in Python at age 12.',
-    'I\'ve visited 4 countries and counting.',
+    'I\'ve visited 5 countries and counting.',
     'I love 3D Printing utility stuff.',
     'Coffee preference: iced, no milk, no sugar.',
+    'I wrote a novel in 11th grade.'
   ],
 
   contactEmail: 'utsaphire@gmail.com',
