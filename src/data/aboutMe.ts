@@ -15,13 +15,13 @@ export const aboutMe = {
   title: 'Full Stack Developer',
   headshotPath: '/images/headshot.jpg', // placeholder — drop in real image later
 
-  bio: `Self-taught developer — coding since 5th grade, with a game shipped on the Google Play Store at 16 and ERP/inventory systems now running real businesses. Currently studying AI & Business at Scaler School of Technology, while building independently under the SaphireScape label. I like software that disappears into the work it does — less flash, more function.`,
+  bio: `Self-taught developer — coding since 5th grade, with a game shipped on the Google Play Store at 16 and ERP/inventory systems now running real businesses. Currently studying Computer Science at BITS Pilani, while building independently under the SaphireScape label. I like software that disappears into the work it does — less flash, more function.`,
 
   education: [
     {
       period: '2026 — 2030',
-      title: 'B.Sc. Data Science',
-      description: 'Focused on AI/ML, computer graphics, and distributed systems.',
+      title: 'B.Sc. Computer Science',
+      description: 'BITS Pilani — Focused on AI/ML, computer graphics, and distributed systems.',
     },
   ] as TimelineEntry[],
 
@@ -39,7 +39,7 @@ export const aboutMe = {
     'I\'ve visited 5 countries and counting.',
     'I love 3D Printing utility stuff.',
     'Coffee preference: iced, no milk, no sugar.',
-    'I wrote a novel in 11th grade.'
+    'I wrote a sci-fi novel called "Code of Existence" in 11th grade.'
   ],
 
   contactEmail: 'utsaphire@gmail.com',

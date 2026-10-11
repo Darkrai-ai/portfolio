@@ -1,0 +1,127 @@
+# Utsav Nandaniya (Utsaphire) — Complete Portfolio Dossier
+
+> Self-taught developer and AI engineer focused on scalable full-stack applications, deep learning, computer vision, and interactive 3D web experiences under the SaphireScape label.
+
+---
+
+## 1. Executive Summary
+
+- **Full Name**: Utsav Nandaniya
+- **Handle / Aliases**: Utsaphire, Darkrai-ai, utsavvv_90
+- **Primary Roles**: Full-Stack Developer, AI & Data Science Engineer, 3D Web Creative Developer
+- **Brand / Studio**: SaphireScape
+- **Official Website**: https://utsaphire.dev
+- **Primary Email**: utsaphire@gmail.com
+- **GitHub**: https://github.com/Darkrai-ai
+- **LinkedIn**: https://www.linkedin.com/in/utsav-nandaniya-2090f53445/
+- **Instagram**: https://www.instagram.com/utsavvv_90/
+
+---
+
+## 2. Biography & Journey
+
+Self-taught developer coding since 5th grade. Wrote his first line of code in Python at age 12. Shipped an original arcade game to the Google Play Store at age 16. Engineered ERP and warehouse inventory systems now operating real commercial businesses in the textile sector.
+
+Currently pursuing a Bachelor of Science (B.Sc.) in Computer Science at BITS Pilani (2026–2030), focusing on AI/ML, computer graphics, and distributed systems. 
+
+Design & Engineering Philosophy: "Software that disappears into the work it does — less flash, more function."
+
+Personal Details:
+- Multilingual: Speaks 3 languages fluently, currently learning a 4th.
+- Traveled to 5+ countries.
+- Enthusiast in 3D printing and custom utility CAD design.
+- Author of the sci-fi novel "Code of Existence" exploring artificial intelligence, consciousness, and computing written during high school.
+
+---
+
+## 3. Technology Matrix (Planetary Orbits)
+
+In the Utsaphire 3D solar system experience, technical capabilities are visualized as celestial bodies:
+
+### Orbit 01: Mercury — 3D Modeling
+- **Technologies**: Blender
+- **Scope**: Sculpting 3D assets, hard-surface mechanical models, UV unwrap, spatial geometry, and GLTF/GLB optimization for real-time web rendering.
+
+### Orbit 02: Venus — DevOps & Infrastructure
+- **Technologies**: Docker, Ubuntu Server, Git, GitHub Actions, Linux
+- **Scope**: Containerized multi-service deployments, Linux server administration, SSH tunneling, CI/CD automated deployment pipelines, and version control.
+
+### Orbit 03: Earth — AI & Data Science
+- **Technologies**: Python, PyTorch, Computer Vision, InsightFace, ArcFace
+- **Scope**: Deep neural networks, face recognition and clustering, image embedding vectors, scientific data workflows, and machine learning pipelines.
+
+### Orbit 04: Mars — IoT & Hardware CAD
+- **Technologies**: Arduino UNO R4 WiFi, Blynk, NFC/RFID, Fusion 360, 3D Printing
+- **Scope**: Microcontroller programming, hardware-in-the-loop firmware, cloud-connected IoT telemetry, parametric CAD modeling, and rapid physical prototyping.
+
+### Orbit 05: Jupiter — Full-Stack Web & 3D
+- **Technologies**: Next.js 15, React 19, TypeScript, JavaScript, Three.js, React Three Fiber (@react-three/fiber), Drei (@react-three/drei), GSAP, Tailwind CSS, HTML5 Canvas, WebGL
+- **Scope**: Interactive 3D web environments, modern responsive web applications, design systems, and state management (Zustand).
+
+### Orbit 06: Saturn — Game Development
+- **Technologies**: Unity, C#
+- **Scope**: Real-time 2D/3D game loops, physics simulations, sound design integration, and player progression systems.
+
+### Orbit 07: Uranus — Mobile & JVM
+- **Technologies**: Flutter, Dart, Android Native, Kotlin, Java
+- **Scope**: Cross-platform iOS/Android enterprise applications, native Android APIs, POS systems, barcode scanning, and JVM backends.
+
+### Orbit 08: Neptune — Databases & Persistence
+- **Technologies**: PostgreSQL, SQLite
+- **Scope**: Relational database architecture, normalized schemas, embedded mobile storage, high-throughput queries, and data integrity.
+
+---
+
+## 4. In-Depth Project Case Studies
+
+### 1. Utsaphire 3D Space Portfolio
+- **Type**: Interactive WebGL Experience
+- **Stack**: Next.js 15, React 19, Three.js, React Three Fiber, GSAP, Tailwind CSS, Howler.js, Zustand
+- **Details**: A cinematic 3D solar system showcasing engineering skills and projects across eight distinct planets. Features real-time planetary shaders, procedural asteroid belt, spatial audio, camera cinematic transitions, and a retro-futuristic HUD readout.
+- **URL**: https://utsaphire.dev
+
+### 2. Face Recognition Sorter
+- **Type**: Computer Vision & AI Tool
+- **Stack**: Python, PyTorch, InsightFace, ArcFace R100, CUDA
+- **Details**: A high-throughput GPU-accelerated application designed to sort and cluster large unstructured image datasets based on facial identity. Employs deep facial feature vectors to group portraits with high precision.
+
+### 3. ThreadFlo
+- **Type**: Enterprise Mobile & Desktop ERP / Inventory System
+- **Stack**: Flutter, Dart, SQLite, Docker, Ubuntu Server
+- **Details**: Production-grade textile manufacturing inventory management system. Handles multi-stage batch tracking, stock ledger, barcode logging, automated SQLite backups, and containerized distribution with self-updating releases.
+
+### 4. IoT Gate Remote
+- **Type**: Embedded Hardware & Smart Automation
+- **Stack**: Arduino UNO R4 WiFi, Blynk IoT Platform, RFID/NFC, C++, Fusion 360
+- **Details**: Smart facility gate access solution combining secure cloud smartphone control with instantaneous NFC/RFID physical badge verification. Housed in a custom 3D-printed enclosure designed in Fusion 360.
+
+### 5. Supermarket Inventory System
+- **Type**: Commercial Retail SaaS & Point-of-Sale
+- **Stack**: Flutter, Dart, SQLite, Cloud Sync, AI Pricing Engine
+- **Details**: Built for retail store operations featuring instantaneous barcode scanning, real-time inventory count, cashflow reconciliation, and machine-learning-assisted offer/discount suggestions.
+
+### 6. Perfume Processors Corporate Website
+- **Type**: Corporate Web Presence
+- **Stack**: Next.js, TypeScript, Tailwind CSS, Responsive Web Design
+- **Details**: Commercial company website and profile showcasing industrial textile chemical processing capabilities.
+- **URL**: https://Perfumeprocessors.com
+
+### 7. Sky Surge
+- **Type**: Mobile Arcade Game
+- **Stack**: Unity, C#, Mobile Shaders
+- **Details**: Fast-paced mobile arcade game elevating classic tap-to-fly mechanics with a multi-tiered power-up system, procedural level generation, dynamic audio feedback, and score progression.
+
+### 8. Dye Formulation Maker
+- **Type**: Industrial Chemistry & Data Science Utility
+- **Stack**: Python, Data Modeling, Algorithmic Solvers
+- **Details**: Formulation aid engineered for textile dye houses, computing optimal multi-pigment ratios and recipe recommendations for target color specifications.
+
+---
+
+## 5. Contact & Links
+
+- **Email**: utsaphire@gmail.com
+- **Website**: https://utsaphire.dev
+- **GitHub**: https://github.com/Darkrai-ai
+- **LinkedIn**: https://www.linkedin.com/in/utsav-nandaniya-2090f53445/
+- **Instagram**: https://www.instagram.com/utsavvv_90/

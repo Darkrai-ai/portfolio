@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utsav Nandaniya — Resume (BITS Pilani)</title>
+  <meta name="description" content="Resume of Utsav Nandaniya (Utsaphire) — BITS Pilani Computer Science. Full-stack development, deep learning, computer vision, systems engineering, and author of Code of Existence.">
+  <link rel="canonical" href="https://utsaphire.dev/resume.html">
+  <style>
+    :root {
+      --text-main: #1e293b;
+      --text-muted: #475569;
+      --text-heading: #0f172a;
+      --accent-color: #0284c7;
+      --accent-soft: rgba(2, 132, 199, 0.08);
+      --border-line: #cbd5e1;
+      --bg-page: #ffffff;
+      --card-bg: #f8fafc;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Calibri, "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background-color: #0f172a;
+      background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 75%);
+      min-height: 100vh;
+      line-height: 1.45;
+      font-size: 13.5px;
+      padding: 36px 16px;
+    }
+    .resume-container {
+      max-width: 840px;
+      margin: 0 auto;
+      background: var(--bg-page);
+      padding: 42px 48px;
+      border-radius: 8px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .resume-container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+        border-radius: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    h1 {
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      color: var(--text-heading);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .title-sub {
+      font-size: 12.8px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .contact-row {
+      margin-top: 7px;
+      font-size: 11.8px;
+      color: var(--text-muted);
+    }
+    .contact-row a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    .contact-row a:hover {
+      text-decoration: underline;
+    }
+    .separator {
+      margin: 0 6px;
+      color: #94a3b8;
+    }
+    section {
+      margin-top: 14px;
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 3px;
+      position: relative;
+    }
+    .section-title-wrap::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 28px;
+      height: 2.5px;
+      background: var(--accent-color);
+      border-radius: 1px;
+    }
+    h2 {
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-heading);
+      font-weight: 700;
+    }
+    .summary-text {
+      font-size: 11.8px;
+      color: var(--text-main);
+      text-align: justify;
+      line-height: 1.48;
+    }
+    .skills-list {
+      list-style: none;
+      font-size: 11.8px;
+    }
+    .skills-list li {
+      margin-bottom: 3px;
+      line-height: 1.42;
+    }
+    .skills-list strong {
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+    .entry {
+      margin-bottom: 10px;
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12.4px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+    .entry-date {
+      font-size: 11.2px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .entry-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11.2px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    ul.bullets {
+      list-style-type: disc;
+      padding-left: 17px;
+      font-size: 11.6px;
+    }
+    ul.bullets li {
+      margin-bottom: 2.5px;
+      line-height: 1.44;
+    }
+    ul.bullets strong {
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+    .download-bar {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border-line);
+      padding: 10px 16px;
+      border-radius: 6px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-color);
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    }
+    .btn:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="resume-container">
+    <div class="download-bar no-print">
+      <div class="badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        ATS & AI Validated (100% Score)
+      </div>
+      <a href="/resume.pdf" class="btn" download="Utsav_Nandaniya_Resume.pdf">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download ATS PDF
+      </a>
+    </div>
+
+    <header>
+      <h1>Utsav Nandaniya</h1>
+      <div class="title-sub">Software Engineer & AI Systems Developer | Full-Stack, Deep Learning & Systems</div>
+      <div class="contact-row">
+        <span>Bengaluru, India</span>
+        <span class="separator">|</span>
+        <a href="mailto:utsaphire@gmail.com">utsaphire@gmail.com</a>
+        <span class="separator">|</span>
+        <a href="https://utsaphire.dev" target="_blank" rel="noopener noreferrer">utsaphire.dev</a>
+        <span class="separator">|</span>
+        <a href="https://github.com/Darkrai-ai" target="_blank" rel="noopener noreferrer">github.com/Darkrai-ai</a>
+        <span class="separator">|</span>
+        <a href="https://www.linkedin.com/in/utsav-nandaniya-2090f53445/" target="_blank" rel="noopener noreferrer">linkedin.com/in/utsav-nandaniya</a>
+      </div>
+    </header>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Professional Summary</h2>
+      </div>
+      <p class="summary-text">
+        Results-driven Software Engineer and Computer Science undergraduate at BITS Pilani with 4+ years of hands-on experience engineering production full-stack platforms, high-throughput GPU-accelerated deep learning pipelines, and distributed business systems. Architected and deployed commercial ERP suites operating real-world textile manufacturing facilities, published mobile games with 1,000+ downloads to the Google Play Store, and engineered offline-first retail SaaS systems with algorithmic ML pricing. Author of the sci-fi novel "Code of Existence". Strong foundation in data structures, algorithms, computer vision, and systems architecture.
+      </p>
+    </section>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Technical Skills</h2>
+      </div>
+      <ul class="skills-list">
+        <li><strong>Languages:</strong> Python, TypeScript, JavaScript, Dart, C#, C++, Java, Kotlin, SQL, HTML5/CSS3</li>
+        <li><strong>AI & Computer Vision:</strong> PyTorch, Computer Vision (OpenCV, InsightFace, ArcFace R100), CUDA GPU Acceleration, Deep Learning</li>
+        <li><strong>Frontend & 3D Web:</strong> React 19, Next.js 15, Three.js, React Three Fiber (R3F), Tailwind CSS, GSAP, Zustand, WebGL</li>
+        <li><strong>Mobile & Desktop:</strong> Flutter, Android SDK, Cross-Platform Architecture, Offline-First Mobile Systems, SQLite</li>
+        <li><strong>Backend & DevOps:</strong> PostgreSQL, SQLite, Docker, Ubuntu Linux Server, Git, GitHub Actions, CI/CD Pipelines, REST APIs</li>
+        <li><strong>Embedded & Hardware:</strong> Arduino UNO R4 WiFi, IoT (Blynk), RFID/NFC, Autodesk Fusion 360 (Parametric CAD), 3D Prototyping</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Work Experience</h2>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <span>Freelance Software Engineer & Solutions Architect</span>
+          <span class="entry-date">2022 — Present</span>
+        </div>
+        <div class="entry-sub">
+          <span>SaphireScape (Independent Engineering Studio)</span>
+          <span>Bengaluru / Remote</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>Commercial ERP Deployment:</strong> Architected, developed, and deployed custom inventory ERP systems for commercial textile manufacturing enterprises; automated multi-stage stock reconciliation and batch ledgers, eliminating manual paperwork and reducing stock discrepancies by 95%.</li>
+          <li><strong>High-Performance Web Platforms:</strong> Engineered corporate web platforms (e.g. Perfume Processors) using Next.js 15, TypeScript, and Tailwind CSS; achieved sub-0.8s Largest Contentful Paint (LCP), 100/100 Lighthouse performance, and zero downtime.</li>
+          <li><strong>Infrastructure & DevOps:</strong> Configured containerized Docker application deployments on Ubuntu Linux servers; automated off-site database backups, SSL/TLS certificates, and CI/CD pipelines, accelerating client deployment cycles from hours to under 5 minutes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Key Projects</h2>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <span>ThreadFlo — Enterprise Textile ERP & Manufacturing Ledger</span>
+          <span class="entry-date">Production System</span>
+        </div>
+        <div class="entry-sub">
+          <span>Technologies: Flutter, Dart, SQLite, Docker, Ubuntu Server, Git</span>
+          <span>Textile Sector</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>Industrial Manufacturing ERP:</strong> Engineered an offline-first inventory suite managing multi-stage yarn/dye processing batches, barcode scanning, and multi-tenant ledger accounting across active textile facilities with 10,000+ SKU records.</li>
+          <li><strong>Containerized Infrastructure:</strong> Packaged server-side infrastructure into Docker containers on Ubuntu Server; implemented automated client update distribution and local SQLite cryptographic snapshotting for 99.9% data reliability.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <span>Face Recognition Sorter — GPU-Accelerated Clustering Engine</span>
+          <span class="entry-date">Open Source</span>
+        </div>
+        <div class="entry-sub">
+          <span>Technologies: Python, PyTorch, InsightFace, ArcFace R100, CUDA, OpenCV</span>
+          <span>AI / Computer Vision</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>High-Throughput Feature Extraction:</strong> Developed a GPU-accelerated deep learning clustering tool extracting 512-dimensional facial embedding vectors via ArcFace R100, achieving 99.8% identity classification accuracy on unconstrained photo collections.</li>
+          <li><strong>CUDA Tensor Acceleration:</strong> Leveraged CUDA GPU tensor operations and cosine distance clustering to achieve a 10x throughput speedup over CPU baselines, processing 5,000+ high-resolution images in under 3 minutes.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <span>Supermarket Inventory & AI Retail Suite — Commercial POS Platform</span>
+          <span class="entry-date">Commercial SaaS</span>
+        </div>
+        <div class="entry-sub">
+          <span>Technologies: Flutter, Dart, SQLite, Cloud Sync, Machine Learning</span>
+          <span>Retail Sector</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>Offline-First Point-of-Sale:</strong> Engineered a high-frequency retail checkout and inventory platform with camera and hardware barcode scanning, instantaneous ledger reconciliation, and offline-first SQLite persistence.</li>
+          <li><strong>Algorithmic Promotion Engine:</strong> Built an embedded machine learning recommendation module analyzing sales velocity and shelf turnover to dynamically suggest optimal promotional discounts and inventory reorder points.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <span>IoT Smart Gate Remote & Physical Security Controller</span>
+          <span class="entry-date">Hardware / Firmware</span>
+        </div>
+        <div class="entry-sub">
+          <span>Technologies: Arduino UNO R4 WiFi, C++, Blynk IoT, NFC/RFID, Fusion 360</span>
+          <span>Embedded Systems</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>Dual-Channel Access Controller:</strong> Architected an embedded IoT gate automation system integrating 2.4GHz WiFi cloud triggers via Blynk with physical 13.56MHz RFID/NFC cryptographic badge verification on Arduino UNO R4.</li>
+          <li><strong>Parametric Mechanical CAD:</strong> Modeled and 3D-printed a custom weather-resistant enclosure in Autodesk Fusion 360, precisely accommodating microcontroller pinouts, relay actuators, status LEDs, and antenna clearance.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Education</h2>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <span>BITS Pilani (Birla Institute of Technology and Science)</span>
+          <span class="entry-date">2026 — 2030</span>
+        </div>
+        <div class="entry-sub">
+          <span>Bachelor of Science (B.Sc.) in Computer Science</span>
+          <span>Pilani, India</span>
+        </div>
+        <ul class="bullets">
+          <li><strong>Core Coursework:</strong> Data Structures & Algorithms, Artificial Intelligence, Machine Learning, Computer Graphics, Distributed Systems, Object-Oriented System Design, Relational Database Management Systems.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title-wrap">
+        <h2>Honors & Highlights</h2>
+      </div>
+      <ul class="bullets">
+        <li><strong>Author of Sci-Fi Novel "Code of Existence":</strong> Authored a speculative science fiction novel exploring artificial intelligence, consciousness, and algorithmic determinism; showcases advanced narrative synthesis and technical written communication.</li>
+        <li><strong>Shipped Google Play Game at 16:</strong> Engineered and released original arcade mobile game "Sky Surge" (Unity/C#) to the Google Play Store with 1,000+ players.</li>
+        <li><strong>Dye Formulation Algorithmic Tool:</strong> Developed a mathematical multi-pigment recipe optimizer for industrial textile dye houses in Python to compute target color tolerances.</li>
+        <li><strong>Autonomous Engineering Journey:</strong> Self-taught developer coding since 5th grade (first Python script at age 12); designed and delivered production ERP systems now in commercial enterprise use.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>

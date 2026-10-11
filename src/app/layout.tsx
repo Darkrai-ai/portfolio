@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Audiowide, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { getStructuredData } from "../utils/seoData";
 
 const audiowide = Audiowide({
   weight: "400",
@@ -23,9 +24,6 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
-const CRYPTIC_DESCRIPTION =
-  "Software that disappears into the work it does — less flash, more function. Eight worlds in quiet orbit under the SaphireScape signal. If you decoded the coordinates, you already know where to look.";
-
 export const viewport: Viewport = {
   themeColor: "#05070D",
   colorScheme: "dark",
@@ -33,51 +31,115 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utsaphire.dev"),
-  title: "Utsaphire",
-  description: CRYPTIC_DESCRIPTION,
-  applicationName: "Utsaphire",
-  authors: [{ name: "Utsaphire", url: "https://utsaphire.dev" }],
-  creator: "Utsaphire",
+  title: {
+    default: "Utsav Nandaniya (Utsaphire) | Full-Stack Developer & AI Engineer",
+    template: "%s | Utsav Nandaniya (Utsaphire)",
+  },
+  description:
+    "Explore the interactive 3D solar system portfolio of Utsav Nandaniya (Utsaphire) — Full-Stack Developer & AI Engineer specializing in Next.js, Three.js, Python, PyTorch, Flutter, and IoT solutions under the SaphireScape label.",
+  applicationName: "Utsaphire Portfolio",
+  authors: [
+    { name: "Utsav Nandaniya", url: "https://utsaphire.dev" },
+    { name: "Utsaphire", url: "https://github.com/Darkrai-ai" },
+  ],
+  generator: "Next.js",
   keywords: [
+    "Utsav Nandaniya",
     "Utsaphire",
     "SaphireScape",
-    "Utsav Nandaniya",
+    "Darkrai-ai",
     "Full Stack Developer",
+    "AI Engineer",
     "AI & Data Science",
-    "3D Web Portfolio",
-    "Three.js",
-    "Next.js",
+    "3D Web Developer",
+    "Creative Developer",
+    "Three.js Portfolio",
+    "Next.js 15",
+    "React 19",
+    "TypeScript",
+    "PyTorch",
+    "Python Developer",
+    "Flutter Developer",
+    "Docker",
+    "DevOps",
+    "WebGL",
+    "BITS Pilani",
+    "Computer Vision",
+    "InsightFace",
+    "ThreadFlo",
+    "IoT",
+    "Blender 3D",
   ],
+  referrer: "origin-when-cross-origin",
+  creator: "Utsav Nandaniya (Utsaphire)",
+  publisher: "SaphireScape",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "https://utsaphire.dev",
+    types: {
+      "text/plain": "https://utsaphire.dev/llms.txt",
+    },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
-      { url: "/icon.png?v=2", type: "image/png", sizes: "256x256" },
+      { url: "/icon.png", sizes: "256x256", type: "image/png" },
     ],
-    shortcut: "/icon.png?v=2",
-    apple: "/icon.png?v=2",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
+  manifest: "/manifest.webmanifest",
   openGraph: {
-    type: "website",
+    type: "profile",
+    firstName: "Utsav",
+    lastName: "Nandaniya",
+    username: "utsaphire",
+    gender: "male",
     locale: "en_US",
     url: "https://utsaphire.dev",
-    siteName: "Utsaphire",
-    title: "Utsaphire",
-    description: CRYPTIC_DESCRIPTION,
+    siteName: "Utsaphire | SaphireScape",
+    title: "Utsav Nandaniya (Utsaphire) | Full-Stack Developer & AI Engineer",
+    description:
+      "Interactive 3D space portfolio of Utsav Nandaniya (Utsaphire) — Full-Stack Developer & AI Engineer specializing in Next.js, Three.js, PyTorch, Flutter, and IoT solutions under the SaphireScape label.",
     images: [
       {
         url: "/og-banner.jpg",
         width: 1376,
         height: 768,
-        alt: "Utsaphire",
+        alt: "Utsav Nandaniya (Utsaphire) - 3D Solar System Portfolio",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Utsaphire",
-    description: CRYPTIC_DESCRIPTION,
-    images: ["/og-banner.jpg"],
+    title: "Utsav Nandaniya (Utsaphire) | Full-Stack Developer & AI Engineer",
+    description:
+      "Explore the interactive 3D solar system portfolio of Utsav Nandaniya (Utsaphire) — Full-Stack Developer & AI Engineer under the SaphireScape label.",
+    creator: "@utsaphire",
+    images: [
+      {
+        url: "/og-banner.jpg",
+        alt: "Utsav Nandaniya (Utsaphire) - 3D Solar System Portfolio",
+      },
+    ],
   },
+  category: "technology",
+  classification: "Portfolio & Software Engineering",
 };
 
 export default function RootLayout({
@@ -85,6 +147,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const structuredData = getStructuredData();
+
   return (
     <html
       lang="en"
@@ -104,6 +168,16 @@ export default function RootLayout({
             gtag('config', 'G-VVESPT1Y9B');
           `}
         </Script>
+        {/* Linked Schema.org JSON-LD structured data for Google Knowledge Graph & Rich Results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
+        {/* Discovery link for AI agents (llms.txt) */}
+        <link rel="describedby" href="/llms.txt" />
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Documentation" />
       </head>
       <body className="min-h-full bg-void text-metal-100 font-body overflow-hidden">
         {children}

@@ -1,0 +1,39 @@
+# Utsav Nandaniya (Utsaphire)
+
+> Full-Stack Developer & AI Engineer building high-performance web systems, computer vision models, and interactive 3D WebGL experiences under the SaphireScape label.
+
+Utsav Nandaniya (known online as Utsaphire and Darkrai-ai) is a self-taught software engineer, AI researcher, and author of the sci-fi novel "Code of Existence". Coding since 5th grade, he shipped an arcade game to the Google Play Store at age 16 and engineered production ERP/inventory systems for textile businesses. He is currently pursuing a B.Sc. in Computer Science at BITS Pilani (2026–2030) while building products independently.
+
+## Online Profiles & Repositories
+- [Portfolio Website](https://utsaphire.dev): Interactive 3D Solar System portfolio showcasing skills, projects, and systems engineering.
+- [GitHub Profile](https://github.com/Darkrai-ai): Open source projects, machine learning models, and software repositories.
+- [LinkedIn Profile](https://www.linkedin.com/in/utsav-nandaniya-2090f53445/): Career background, education, and professional updates.
+- [Instagram Profile](https://www.instagram.com/utsavvv_90/): Creative experiments and life highlights.
+
+## Core Technical Competencies
+- [Full-Stack Web & 3D](https://utsaphire.dev): Next.js 15, React 19, TypeScript, Three.js, WebGL, Tailwind CSS, GSAP.
+- [AI & Data Science](https://utsaphire.dev): Python, PyTorch, Computer Vision, InsightFace, ArcFace R100 face clustering.
+- [Mobile & Cross-Platform](https://utsaphire.dev): Flutter, Dart, Kotlin, Java, Android.
+- [DevOps & Cloud Systems](https://utsaphire.dev): Docker containerization, Ubuntu Server administration, Git, GitHub CI/CD.
+- [Hardware CAD & IoT](https://utsaphire.dev): Arduino UNO R4 WiFi, Blynk, NFC/RFID, Fusion 360 parametric design, 3D printing.
+- [Databases](https://utsaphire.dev): PostgreSQL, SQLite.
+- [Game Development](https://utsaphire.dev): Unity, C#.
+- [3D Modeling](https://utsaphire.dev): Blender hard-surface and spatial geometry.
+
+## Featured Software Projects
+- [ThreadFlo](https://utsaphire.dev): Enterprise inventory and distribution management system for textile manufacturing, backed by SQLite and containerized server infrastructure.
+- [Face Recognition Sorter](https://utsaphire.dev): GPU-accelerated facial recognition clustering engine utilizing PyTorch, InsightFace, and ArcFace R100 for high-accuracy sorting of large photo collections.
+- [IoT Gate Remote](https://utsaphire.dev): Smart gate access automation system powered by Arduino UNO R4 WiFi, Blynk cloud telemetry, and NFC/RFID authentication.
+- [Supermarket Inventory System](https://utsaphire.dev): Retail POS and stock management platform with barcode scanning, cloud sync, and AI offer suggestions.
+- [Perfume Processors Website](https://Perfumeprocessors.com): High-performance digital profile and company website for textile industry leader.
+- [Sky Surge](https://utsaphire.dev): Arcade mobile game featuring power-up systems, procedural challenge loops, and responsive flight controls.
+- [Dye Formulation Maker](https://utsaphire.dev): Algorithmic pigment ratio solver assisting textile businesses in calculating precision dye formulations.
+- [Utsaphire 3D Portfolio](https://utsaphire.dev): Cinematic solar system experience built with Next.js, Three.js, and GSAP mapping developer capabilities to planetary orbits.
+
+## Education
+- B.Sc. Computer Science (2026–2030), BITS Pilani: Focus on machine learning, distributed systems, and computer graphics.
+
+## Contact Information
+- Email: utsaphire@gmail.com
+- Location: India
+- Brand: SaphireScape
